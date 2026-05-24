@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">Galaxy Barbershop logo mark</title>
+  <desc id="desc">Minimal gold Galaxy Barbershop monogram.</desc>
+  <rect width="96" height="96" rx="22" fill="#101111"/>
+  <rect x="12" y="12" width="72" height="72" rx="18" fill="none" stroke="#c99a3d" stroke-width="3"/>
+  <path d="M64 32c-4.2-4-9.8-6.2-16.2-6.2-13 0-22.8 9.8-22.8 22.3 0 12.7 9.8 22.1 23 22.1 6.6 0 12.4-2 16.5-5.6V53H48.2v-9.4H74v25.3C67.5 76.1 58.5 80 47.7 80 29.1 80 16 66.5 16 48.2 16 30 29.5 16 48 16c9.8 0 18.4 3.4 24.4 9.4L64 32Z" fill="#c99a3d"/>
+  <path d="M50 52h19" stroke="#101111" stroke-width="4" stroke-linecap="round"/>
+</svg>
