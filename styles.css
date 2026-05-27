@@ -1045,6 +1045,7 @@ h1 {
   aspect-ratio: 4 / 3;
   min-height: 0;
   object-fit: cover;
+  object-position: center top;
   transition:
     filter 220ms ease,
     transform 220ms ease;
