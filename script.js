@@ -1,4 +1,99 @@
+const accessControl = {
+  enabled: true,
+  username: "bucur",
+  password: "bucurtest1234",
+  sessionHours: 12,
+  storageKey: "galaxyAccessUntil",
+};
+
+function hasActiveAccessSession() {
+  try {
+    return Number(window.localStorage.getItem(accessControl.storageKey)) > Date.now();
+  } catch (error) {
+    return false;
+  }
+}
+
+function saveAccessSession() {
+  try {
+    const expiresAt = Date.now() + accessControl.sessionHours * 60 * 60 * 1000;
+    window.localStorage.setItem(accessControl.storageKey, String(expiresAt));
+  } catch (error) {
+    // If storage is blocked, keep the page unlocked for the current load.
+  }
+}
+
+function unlockWebsite() {
+  document.documentElement.classList.remove("auth-pending", "auth-locked");
+  document.documentElement.classList.add("auth-unlocked");
+  document.body.classList.remove("lock-scroll");
+  document.querySelector("[data-auth-gate]")?.remove();
+}
+
+function showAccessGate() {
+  document.documentElement.classList.remove("auth-pending", "auth-unlocked");
+  document.documentElement.classList.add("auth-locked");
+  document.body.classList.add("lock-scroll");
+
+  if (document.querySelector("[data-auth-gate]")) {
+    return;
+  }
+
+  const gate = document.createElement("section");
+  gate.className = "auth-gate";
+  gate.dataset.authGate = "true";
+  gate.setAttribute("aria-label", "Private website access");
+  gate.innerHTML = `
+    <form class="auth-panel" data-auth-form>
+      <h1>Private access</h1>
+      <p>Enter the username and password to view Galaxy Barbershop.</p>
+      <label>
+        Username
+        <input name="username" type="text" autocomplete="username" required />
+      </label>
+      <label>
+        Password
+        <input name="password" type="password" autocomplete="current-password" required />
+      </label>
+      <button class="auth-submit" type="submit">Unlock website</button>
+      <div class="auth-error" role="status" aria-live="polite" data-auth-error></div>
+    </form>
+  `;
+
+  document.body.prepend(gate);
+  const form = gate.querySelector("[data-auth-form]");
+  const error = gate.querySelector("[data-auth-error]");
+  const username = form.elements.username;
+  const password = form.elements.password;
+
+  requestAnimationFrame(() => username.focus());
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const usernameMatches = username.value.trim() === accessControl.username;
+    const passwordMatches = password.value === accessControl.password;
+
+    if (!usernameMatches || !passwordMatches) {
+      error.textContent = "Wrong username or password.";
+      password.value = "";
+      password.focus();
+      return;
+    }
+
+    saveAccessSession();
+    unlockWebsite();
+  });
+}
+
+if (!accessControl.enabled || hasActiveAccessSession()) {
+  unlockWebsite();
+} else {
+  showAccessGate();
+}
+
 const header = document.querySelector("[data-header]");
+const hero = document.querySelector(".hero");
+const mobileActionBar = document.querySelector(".mobile-action-bar");
 const nav = document.querySelector("[data-nav]");
 const navToggle = document.querySelector("[data-nav-toggle]");
 const gallery = document.querySelector("[data-gallery]");
@@ -993,12 +1088,21 @@ const applyLanguage = (language) => {
     bookingStatus.textContent = t.booking.ready;
   }
 
+  const optionalLabel = {
+    de: "optional",
+    en: "optional",
+    fr: "optionnel",
+    it: "opzionale",
+    es: "opcional",
+  }[t.code] ?? "optional";
+
   document.querySelectorAll(".booking-form label").forEach((label, index) => {
     const control = label.querySelector("input, select, textarea");
     if (!control) {
       return;
     }
-    label.childNodes[0].textContent = `${t.booking.labels[index]} `;
+    const labelText = index === 1 ? `${t.booking.labels[index]} ${optionalLabel}` : t.booking.labels[index];
+    label.childNodes[0].textContent = `${labelText} `;
   });
   setPlaceholder('input[name="name"]', t.booking.placeholders[0]);
   setPlaceholder('input[name="email"]', t.booking.placeholders[1]);
@@ -1324,8 +1428,20 @@ const setHeaderState = () => {
   header?.classList.toggle("is-scrolled", window.scrollY > 18);
 };
 
+const setMobileActionState = () => {
+  if (!mobileActionBar || !hero) {
+    return;
+  }
+
+  const heroBottom = hero.getBoundingClientRect().bottom + window.scrollY;
+  document.body.classList.toggle("mobile-actions-visible", window.scrollY > heroBottom - window.innerHeight * 0.28);
+};
+
 setHeaderState();
+setMobileActionState();
 window.addEventListener("scroll", setHeaderState, { passive: true });
+window.addEventListener("scroll", setMobileActionState, { passive: true });
+window.addEventListener("resize", setMobileActionState);
 
 const revealSection = (target) => {
   const revealRoot = target.closest(".reveal") ?? target;
@@ -1916,7 +2032,7 @@ bookingForm?.addEventListener("submit", (event) => {
   const description = [
     `${t.message.name}: ${name}`,
     `${t.message.phone}: ${phone}`,
-    `${t.message.email}: ${email}`,
+    email ? `${t.message.email}: ${email}` : "",
     `${t.message.barber}: ${barber}`,
     `${t.message.service}: ${serviceLabel}`,
     `${t.message.price}: ${servicePrice}`,
@@ -1949,7 +2065,7 @@ bookingForm?.addEventListener("submit", (event) => {
     "",
     `${t.message.name}: ${name}`,
     `${t.message.phone}: ${phone}`,
-    `${t.message.email}: ${email}`,
+    email ? `${t.message.email}: ${email}` : "",
     `${t.message.barber}: ${barber}`,
     `${t.message.service}: ${serviceLabel}`,
     `${t.message.price}: ${servicePrice}`,

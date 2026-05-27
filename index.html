@@ -22,10 +22,17 @@
       if ("scrollRestoration" in window.history) {
         window.history.scrollRestoration = "manual";
       }
+      var galaxyAuthEnabled = true;
       if (window.location.hash) {
         document.documentElement.dataset.initialHash = window.location.hash.slice(1);
         window.history.replaceState(null, "", window.location.pathname + window.location.search);
         window.scrollTo(0, 0);
+      }
+      try {
+        var accessUntil = Number(window.localStorage.getItem("galaxyAccessUntil"));
+        document.documentElement.classList.add(!galaxyAuthEnabled || accessUntil > Date.now() ? "auth-unlocked" : "auth-pending");
+      } catch (error) {
+        document.documentElement.classList.add(galaxyAuthEnabled ? "auth-pending" : "auth-unlocked");
       }
     </script>
     <link rel="stylesheet" href="styles.css" />
@@ -128,13 +135,13 @@
     <main id="main">
       <section class="hero" id="top" aria-label="Galaxy Barbershop Zürich">
         <picture>
-          <img src="assets/hero.webp" alt="Frischer Herrenhaarschnitt mit präzisem Bart bei Galaxy Barbershop Zürich" />
+          <img src="assets/hero.webp" alt="Frischer Herrenhaarschnitt mit präzisem Bart bei Galaxy Barbershop Zürich" fetchpriority="high" decoding="async" />
         </picture>
         <div class="hero-overlay"></div>
         <div class="cosmic-grid" aria-hidden="true"></div>
         <div class="starfield" aria-hidden="true"></div>
         <div class="hero-content">
-          <p class="eyebrow reveal">Zürich-Schwamendingen · Dübendorfstrasse 22</p>
+          <p class="eyebrow reveal">Zürich-Schwamendingen</p>
           <h1 class="reveal">Galaxy Barbershop</h1>
           <p class="hero-copy">
             Frische Fades, saubere Bartlinien und Walk-ins jederzeit in Zürich-Schwamendingen.
@@ -434,8 +441,8 @@
             <input name="name" autocomplete="name" required placeholder="Vorname Nachname" />
           </label>
           <label>
-            E-Mail
-            <input name="email" type="email" autocomplete="email" required placeholder="name@email.com" />
+            E-Mail optional
+            <input name="email" type="email" autocomplete="email" placeholder="name@email.com" />
           </label>
           <label>
             Telefon
