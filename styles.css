@@ -1493,10 +1493,10 @@ a.info-strip-cell:hover strong,
 
 .lightbox button {
   position: absolute;
-  top: -48px;
+  top: -50px;
   right: 0;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border: 1px solid rgba(255, 255, 255, 0.36);
   background: rgba(255, 255, 255, 0.12);
   color: var(--white);
@@ -1728,10 +1728,6 @@ a.info-strip-cell:hover strong,
 }
 
 @media (max-width: 620px) {
-  body {
-    padding-bottom: calc(78px + env(safe-area-inset-bottom));
-  }
-
   .section {
     width: min(100% - 24px, 1240px);
     padding: 34px 0;

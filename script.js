@@ -1364,16 +1364,6 @@ if (reviewCarousel && reviewTrack && reviewDots && reviewHighlights.length > 0) 
   startAutoAdvance();
 }
 
-const getOpeningWindow = (date) => {
-  const open = new Date(date);
-  open.setHours(10, 0, 0, 0);
-
-  const close = new Date(date);
-  close.setHours(19, 0, 0, 0);
-
-  return { open, close };
-};
-
 const setOpenStatus = () => {
   if (!openStatus) {
     return;
