@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Galaxy Barbershop Zürich | Fades, Bart & moderne Haarschnitte</title>
+    <title>Galaxy Barbershop Zürich | Haarschnitt CHF 20, ohne Termin</title>
     <meta
       name="description"
-      content="Galaxy Barbershop in Zürich-Schwamendingen. Fades, Bartpflege, moderne Herrenhaarschnitte und Kinderhaarschnitte. Dübendorfstrasse 22, 8051 Zürich."
+      content="Barbershop in Zürich-Schwamendingen: Haarschnitt CHF 20, Bart CHF 15. Walk-ins ohne Termin. 4.8 Sterne aus 119 Google-Reviews. Dübendorfstrasse 22."
     />
-    <meta name="theme-color" content="#101111" />
+    <meta name="theme-color" content="#0f0e0c" />
     <meta property="og:title" content="Galaxy Barbershop Zürich" />
     <meta
       property="og:description"
-      content="Präzise Fades, saubere Konturen und entspannte Barber-Atmosphäre an der Dübendorfstrasse 22 in Zürich."
+      content="Haarschnitt CHF 20, ohne Termin. 4.8 Sterne aus 119 Google-Reviews. Dübendorfstrasse 22, Zürich-Schwamendingen."
     />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="assets/hero.webp" />
@@ -22,19 +22,18 @@
       if ("scrollRestoration" in window.history) {
         window.history.scrollRestoration = "manual";
       }
-      var galaxyAuthEnabled = true;
       if (window.location.hash) {
         document.documentElement.dataset.initialHash = window.location.hash.slice(1);
         window.history.replaceState(null, "", window.location.pathname + window.location.search);
         window.scrollTo(0, 0);
       }
-      try {
-        var accessUntil = Number(window.localStorage.getItem("galaxyAccessUntil"));
-        document.documentElement.classList.add(!galaxyAuthEnabled || accessUntil > Date.now() ? "auth-unlocked" : "auth-pending");
-      } catch (error) {
-        document.documentElement.classList.add(galaxyAuthEnabled ? "auth-pending" : "auth-unlocked");
-      }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Geist:wght@400;500;600&display=swap"
+    />
     <link rel="stylesheet" href="styles.css" />
     <script type="application/ld+json">
       {
@@ -51,39 +50,51 @@
           "addressCountry": "CH"
         },
         "telephone": "+41766820255",
-        "priceRange": "CHF 20",
+        "priceRange": "CHF 15-35",
         "makesOffer": [
           {
             "@type": "Offer",
-            "name": "Haircut & Styling",
-            "price": "20",
-            "priceCurrency": "CHF"
-          },
-          {
-            "@type": "Offer",
-            "name": "Skin Fade & Taper",
+            "name": "Haarschnitt & Styling",
             "price": "20",
             "priceCurrency": "CHF"
           },
           {
             "@type": "Offer",
             "name": "Bart & Konturen",
-            "price": "20",
+            "price": "15",
             "priceCurrency": "CHF"
           },
           {
             "@type": "Offer",
-            "name": "Kids & Teens",
-            "price": "20",
+            "name": "Haarschnitt & Bart",
+            "price": "35",
+            "priceCurrency": "CHF"
+          },
+          {
+            "@type": "Offer",
+            "name": "Kinder bis 12 Jahre",
+            "price": "15",
             "priceCurrency": "CHF"
           }
         ],
         "openingHoursSpecification": [
           {
             "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            "opens": "10:00",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday"],
+            "opens": "09:00",
             "closes": "19:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Thursday", "Friday"],
+            "opens": "09:00",
+            "closes": "20:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Saturday"],
+            "opens": "09:00",
+            "closes": "18:00"
           }
         ],
         "aggregateRating": {
@@ -124,10 +135,8 @@
       <nav id="site-nav" class="site-nav" data-nav>
         <a href="#services">Services</a>
         <a href="#location">Location</a>
-        <a href="#team">Team</a>
         <a href="#gallery">Galerie</a>
         <a href="#reviews">Reviews</a>
-        <a href="#booking">Termin</a>
         <a href="#contact">Kontakt</a>
       </nav>
     </header>
@@ -138,84 +147,57 @@
           <img src="assets/hero.webp" alt="Frischer Herrenhaarschnitt mit präzisem Bart bei Galaxy Barbershop Zürich" fetchpriority="high" decoding="async" />
         </picture>
         <div class="hero-overlay"></div>
-        <div class="cosmic-grid" aria-hidden="true"></div>
-        <div class="starfield" aria-hidden="true"></div>
         <div class="hero-content">
-          <p class="eyebrow reveal">Zürich-Schwamendingen</p>
-          <h1 class="reveal">Galaxy Barbershop</h1>
+          <span class="hero-status" data-open-status>Mo-Mi 9-19 · Do-Fr 9-20 · Sa 9-18</span>
+          <p class="eyebrow reveal">Galaxy Barbershop · Zürich-Schwamendingen</p>
+          <h1 class="reveal">Haarschnitt CHF 20. Ohne Termin.</h1>
           <p class="hero-copy">
-            Frische Fades, saubere Bartlinien und Walk-ins jederzeit in Zürich-Schwamendingen.
-            Khaled, Abdul und Said sorgen dafür, dass du sauber rausgehst.
+            In Zürich zahlst du für einen Cut schnell CHF 50 oder mehr. Bei Khaled: saubere Fades,
+            scharfe Konturen und 4.8 Sterne aus 119 Google-Reviews. Zum fairen Fixpreis.
           </p>
           <div class="hero-actions" aria-label="Kontaktoptionen">
-            <a class="button primary" href="https://wa.me/41766820255?text=Hallo%20Galaxy%20Barbershop%2C%20ich%20m%C3%B6chte%20einen%20Termin%20anfragen." target="_blank" rel="noopener noreferrer">Termin per WhatsApp</a>
+            <a class="button primary" href="https://wa.me/41766820255?text=Hallo%20Galaxy%20Barbershop%2C%20ich%20m%C3%B6chte%20einen%20Termin%20anfragen." target="_blank" rel="noopener noreferrer">Per WhatsApp schreiben</a>
             <a class="button secondary" href="tel:+41766820255">Anrufen</a>
-            <a class="button neon" href="#booking">Termin vorbereiten</a>
             <a class="button ghost" href="https://www.google.com/maps/dir/?api=1&destination=D%C3%BCbendorfstrasse%2022%2C%208051%20Z%C3%BCrich" target="_blank" rel="noopener noreferrer">Route</a>
           </div>
-          <div class="hero-proof" aria-label="Google Bewertung">
+          <a class="hero-proof" href="https://www.google.com/search?q=galaxy+barbershop+z%C3%BCrich" target="_blank" rel="noopener noreferrer" aria-label="Google Bewertung: 4.8 von 5, 119 Reviews">
             <strong>4.8 / 5</strong>
             <span>119 Google Reviews</span>
-            <a href="#reviews">Bewertungen ansehen</a>
-          </div>
+            <span class="hero-proof-cta">Bewertungen ansehen</span>
+          </a>
         </div>
       </section>
 
-      <section class="quickbar" aria-label="Schnellkontakt">
-        <a href="tel:+41766820255">076 682 02 55</a>
-        <span data-open-status>Mo-Sa 10:00-19:00</span>
-        <a href="https://www.google.com/maps/search/?api=1&query=Galaxy%20Barbershop%20D%C3%BCbendorfstrasse%2022%208051%20Z%C3%BCrich" target="_blank" rel="noopener noreferrer">Google Maps</a>
-      </section>
-
-      <section class="proof-strip reveal" aria-label="Warum Galaxy Barbershop">
+      <section class="info-strip reveal" aria-label="Schnellinfo">
+        <a href="tel:+41766820255">
+          <strong>076 682 02 55</strong>
+          <span>Anrufen</span>
+        </a>
         <div>
-          <strong>Walk-ins</strong>
-          <span>Immer während der Öffnungszeiten</span>
-        </div>
-        <div>
-          <strong>4.8 Google Rating</strong>
-          <span>119 öffentliche Reviews</span>
-        </div>
-        <div>
-          <strong>Dübendorfstrasse 22</strong>
-          <span>Direkt in Zürich-Schwamendingen</span>
-        </div>
-      </section>
-
-      <section class="conversion-strip reveal" aria-label="Schnell buchen">
-        <div>
-          <span>Alle Cuts</span>
           <strong>CHF 20</strong>
+          <span>Haarschnitt · anderswo CHF 40–80</span>
         </div>
         <div>
-          <span>Walk-ins</span>
-          <strong>Immer willkommen</strong>
+          <strong>Walk-in</strong>
+          <span>ohne Termin vorbeikommen</span>
         </div>
-        <a class="button primary" href="https://wa.me/41766820255?text=Hallo%20Galaxy%20Barbershop%2C%20ich%20m%C3%B6chte%20einen%20Termin%20anfragen." target="_blank" rel="noopener noreferrer">Jetzt per WhatsApp</a>
-      </section>
-
-      <section class="section intro reveal">
-        <div class="section-kicker">Dein lokaler Barber in Zürich</div>
-        <div class="intro-grid">
-          <h2>Ein sauberer Cut macht den Unterschied, bevor du ein Wort sagst.</h2>
-          <p>
-            Galaxy verbindet klassische Barber-Handarbeit mit modernen Styles: klare Übergänge,
-            scharfe Konturen, ruhige Beratung und ein Ergebnis, das auch nach ein paar Tagen noch sitzt.
-          </p>
-        </div>
+        <a href="#reviews">
+          <strong>4.8 ★</strong>
+          <span>119 Google Reviews</span>
+        </a>
       </section>
 
       <section class="section services reveal" id="services">
         <div class="section-heading">
-          <span class="section-kicker">Services</span>
-          <h2>Für Alltag, Anlass und frischen Neustart.</h2>
-          <p class="section-lead">Alle Services kosten CHF 20. Walk-ins sind während der Öffnungszeiten willkommen.</p>
+          <span class="section-kicker">Preise</span>
+          <h2>Vier Services. Fixpreise. Kein Kleingedrucktes.</h2>
+          <p class="section-lead">Zum Vergleich: ein Herrenhaarschnitt kostet in Zürich meist CHF 40 bis 80. Hier: CHF 20. Und du brauchst keinen Termin.</p>
         </div>
         <div class="service-grid">
           <article class="service-card">
             <span>01</span>
-            <h3>Haircut & Styling</h3>
-            <p>Typgerechte Herrenhaarschnitte, Beratung zu Länge, Form und Finish.</p>
+            <h3>Haarschnitt & Styling</h3>
+            <p>Typgerechte Herrenhaarschnitte inklusive Fades und Taper, mit Beratung zu Länge, Form und Finish.</p>
             <div class="service-meta-group">
               <strong class="service-meta">ab 30 Min.</strong>
               <strong class="service-price">CHF 20</strong>
@@ -223,29 +205,29 @@
           </article>
           <article class="service-card">
             <span>02</span>
-            <h3>Skin Fade & Taper</h3>
-            <p>Weiche Übergänge, saubere Seiten und präzise Arbeit an den Konturen.</p>
+            <h3>Bart & Konturen</h3>
+            <p>Beard Trim, Rasur-Linien und gepflegte Form für einen klaren Look.</p>
             <div class="service-meta-group">
-              <strong class="service-meta">ab 45 Min.</strong>
-              <strong class="service-price">CHF 20</strong>
+              <strong class="service-meta">ab 20 Min.</strong>
+              <strong class="service-price">CHF 15</strong>
             </div>
           </article>
           <article class="service-card">
             <span>03</span>
-            <h3>Bart & Konturen</h3>
-            <p>Beard trim, Rasur-Linien und gepflegte Form für einen klaren Look.</p>
+            <h3>Haarschnitt & Bart</h3>
+            <p>Das Komplettpaket: frischer Cut und gepflegter Bart in einem Termin.</p>
             <div class="service-meta-group">
-              <strong class="service-meta">ab 30 Min.</strong>
-              <strong class="service-price">CHF 20</strong>
+              <strong class="service-meta">ab 45 Min.</strong>
+              <strong class="service-price">CHF 35</strong>
             </div>
           </article>
           <article class="service-card">
             <span>04</span>
-            <h3>Kids & Teens</h3>
-            <p>Geduldige Cuts für Kinder und Jugendliche, von klassisch bis trendig.</p>
+            <h3>Kinder bis 12 Jahre</h3>
+            <p>Geduldige Haarschnitte für Kinder bis 12 Jahre, von klassisch bis trendig.</p>
             <div class="service-meta-group">
               <strong class="service-meta">ab 30 Min.</strong>
-              <strong class="service-price">CHF 20</strong>
+              <strong class="service-price">CHF 15</strong>
             </div>
           </article>
         </div>
@@ -257,68 +239,13 @@
         <img src="assets/taper-front.webp" alt="Moderner Taper mit sauberem Styling" loading="lazy" />
       </section>
 
-      <section class="section location-section reveal" id="location">
-        <div class="location-copy">
-          <span class="section-kicker">Location</span>
-          <h2>Dunkles Holz, Leder und warmes Licht.</h2>
-          <p>
-            Der Shop fühlt sich ruhig und hochwertig an: dunkle Wände, Ledersitze,
-            Spiegel und saubere Stationen geben dem Cut den richtigen Rahmen.
-          </p>
-          <div class="location-details" aria-label="Location Details">
-            <span>Ledersitze</span>
-            <span>warmes Licht</span>
-            <span>saubere Barber-Stationen</span>
-          </div>
-        </div>
-        <figure class="location-media">
-          <img src="assets/barberroom2.webp" alt="Dunkler Barberraum mit Lederlounge, warmem Licht und Checkerboard-Boden im Galaxy Barbershop Zürich" loading="lazy" />
-          <figcaption>Dübendorfstrasse 22 · Zürich-Schwamendingen</figcaption>
-        </figure>
-      </section>
-
-      <section class="section team reveal" id="team">
+      <section class="section gallery-section reveal" id="gallery">
         <div class="section-heading">
-          <span class="section-kicker">Team</span>
-          <h2>Drei Barbers, ein Anspruch: sauber rausgehen.</h2>
+          <span class="section-kicker">Galerie</span>
+          <h2>Frische Cuts aus dem Shop.</h2>
+          <p class="section-lead">Echte Kunden, echte Ergebnisse. Tippe auf ein Bild für die Grossansicht.</p>
         </div>
-        <div class="team-grid">
-          <article>
-            <h3>Khaled</h3>
-            <p>Ruhige Beratung, präzise Linien und Erfahrung mit klassischen sowie modernen Herrenstyles.</p>
-            <div class="team-tags" aria-label="Khaled Schwerpunkte">
-              <span>Klassische Cuts</span>
-              <span>Saubere Linien</span>
-              <span>Beratung</span>
-            </div>
-          </article>
-          <article>
-            <h3>Abdul</h3>
-            <p>Stark bei Fades, Übergängen und Cuts, die im Alltag unkompliziert sitzen.</p>
-            <div class="team-tags" aria-label="Abdul Schwerpunkte">
-              <span>Skin Fades</span>
-              <span>Taper</span>
-              <span>Moderne Styles</span>
-            </div>
-          </article>
-          <article>
-            <h3>Said</h3>
-            <p>Saubere Konturen, Bartpflege und ein Blick für Details, die den Look komplett machen.</p>
-            <div class="team-tags" aria-label="Said Schwerpunkte">
-              <span>Bart</span>
-              <span>Konturen</span>
-              <span>Detailarbeit</span>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="section cut-proof reveal" id="proof">
-        <div class="section-heading">
-          <span class="section-kicker">Cut Highlights</span>
-          <h2>Details, die man sofort sieht.</h2>
-        </div>
-        <div class="proof-card-grid">
+        <div class="proof-card-grid" id="proof">
           <article class="proof-card">
             <img src="assets/clear-contours.webp" alt="Kinderhaarschnitt mit sauberem Design und klaren Konturen" loading="lazy" />
             <div>
@@ -343,13 +270,6 @@
               <p>Der letzte Feinschliff macht den Unterschied zwischen okay und frisch.</p>
             </div>
           </article>
-        </div>
-      </section>
-
-      <section class="section gallery-section reveal" id="gallery">
-        <div class="section-heading">
-          <span class="section-kicker">Galerie</span>
-          <h2>Echte Arbeit aus dem Shop.</h2>
         </div>
         <div class="gallery" data-gallery>
           <button type="button" data-full="assets/classic-fade.webp" aria-label="Bild vergrößern">
@@ -376,10 +296,10 @@
       <section class="section reviews reveal">
         <div class="reviews-copy" id="reviews">
           <span class="section-kicker">Google Reviews</span>
-          <h2>Vertrauen, bevor der erste Schnitt beginnt.</h2>
+          <h2>4.8 Sterne. 119 Reviews. Alle öffentlich auf Google.</h2>
           <p>
-            Kundenstimmen sind ein starker Vertrauensbeweis. Wer mehr lesen oder
-            selbst bewerten möchte, kommt direkt zur offiziellen Google-Seite.
+            Nichts davon steht nur auf unserer Seite. Jede Bewertung ist auf Google
+            nachlesbar. Schau selbst, was Kunden über Fades, Bart und Wartezeit sagen.
           </p>
           <div class="rating-panel">
             <div>
@@ -423,91 +343,38 @@
         </div>
       </section>
 
-      <section class="section booking reveal">
-        <div class="booking-copy" id="booking">
-          <span class="section-kicker">Termin</span>
-          <h2>Reserviere deinen nächsten Cut.</h2>
-          <p>
-            Schick deine Anfrage per WhatsApp. Wir bestätigen den Termin während der Öffnungszeiten.
-            Die Kalenderdatei hilft dir, den Termin direkt zu speichern.
+      <section class="section location-section reveal" id="location">
+        <div class="location-copy">
+          <span class="section-kicker">Der Shop</span>
+          <h2>Khaled schneidet. Du gehst sauber raus.</h2>
+          <p class="location-intro-text">
+            Khaled schneidet seit Jahren klassische und moderne Herrenstyles: klare Übergänge,
+            scharfe Konturen, ehrliche Beratung. Immer derselbe Barber, immer dieselbe Qualität.
+            Du weisst genau, was du bekommst.
           </p>
-          <div class="booking-status" data-booking-status aria-live="polite">
-            Antwort meist während der Öffnungszeiten.
+          <p class="location-body-text">
+            Dübendorfstrasse 22, direkt in Schwamendingen. Kein Schickimicki: ein sauberer,
+            ruhiger Shop mit Ledersitzen und warmem Licht. Kurz warten, frisch rausgehen.
+          </p>
+          <div class="location-details" aria-label="Location Details">
+            <span>Ledersitze</span>
+            <span>warmes Licht</span>
+            <span>saubere Barber-Stationen</span>
           </div>
         </div>
-        <form class="booking-form" data-booking-form>
-          <label>
-            Name
-            <input name="name" autocomplete="name" required placeholder="Vorname Nachname" />
-          </label>
-          <label>
-            E-Mail optional
-            <input name="email" type="email" autocomplete="email" placeholder="name@email.com" />
-          </label>
-          <label>
-            Telefon
-            <input name="phone" type="tel" autocomplete="tel" required placeholder="+41 ..." />
-          </label>
-          <label>
-            Barber
-            <select name="barber" required>
-              <option value="" selected disabled>Barber wählen</option>
-              <option value="Khaled">Khaled</option>
-              <option value="Abdul">Abdul</option>
-              <option value="Said">Said</option>
-            </select>
-          </label>
-          <label>
-            Service
-            <select name="service" required>
-              <option value="" selected disabled>Service wählen</option>
-              <option value="Haircut & Styling">Haircut & Styling · CHF 20</option>
-              <option value="Skin Fade & Taper">Skin Fade & Taper · CHF 20</option>
-              <option value="Bart & Konturen">Bart & Konturen · CHF 20</option>
-              <option value="Kids & Teens">Kids & Teens · CHF 20</option>
-            </select>
-          </label>
-          <label>
-            Datum
-            <input name="date" type="date" required />
-          </label>
-          <label>
-            Zeit
-            <select name="time" required>
-              <option value="" selected disabled>Zeit wählen</option>
-            </select>
-          </label>
-          <label>
-            Dauer
-            <select name="duration" required>
-              <option value="30">30 Minuten</option>
-              <option value="45">45 Minuten</option>
-              <option value="60">60 Minuten</option>
-            </select>
-          </label>
-          <label class="form-wide">
-            Wünsche
-            <textarea name="notes" rows="4" placeholder="Fade, Bart, Kinderhaarschnitt, bevorzugter Stil ..."></textarea>
-          </label>
-          <div class="form-actions form-wide">
-            <button class="button primary" type="submit">WhatsApp vorbereiten</button>
-            <a class="button secondary is-disabled" href="#" data-mail-request aria-disabled="true" tabindex="-1" target="_blank" rel="noopener noreferrer">WhatsApp senden</a>
-            <a class="button ghost dark is-disabled" href="#" data-calendar-download aria-disabled="true" tabindex="-1">Kalenderdatei</a>
-            <a class="button ghost dark is-disabled" href="#" data-google-calendar aria-disabled="true" tabindex="-1" target="_blank" rel="noopener noreferrer">Google Calendar</a>
-          </div>
-          <p class="privacy-note form-wide">
-            Deine Angaben werden nur in der Kalenderdatei und in der vorbereiteten Anfrage verwendet. Es wird nichts automatisch an externe Server gesendet.
-          </p>
-        </form>
+        <figure class="location-media">
+          <img src="assets/barberroom2.webp" alt="Dunkler Barberraum mit Lederlounge, warmem Licht und Checkerboard-Boden im Galaxy Barbershop Zürich" loading="lazy" />
+          <figcaption>Dübendorfstrasse 22 · Zürich-Schwamendingen</figcaption>
+        </figure>
       </section>
 
       <section class="section contact reveal">
         <div id="contact">
           <span class="section-kicker">Kontakt</span>
-          <h2>Komm vorbei oder ruf kurz an.</h2>
+          <h2>Ohne Termin vorbeikommen. Oder kurz schreiben.</h2>
           <p>
-            Galaxy Barbershop liegt an der Dübendorfstrasse 22 in 8051 Zürich.
-            Walk-ins sind während der Öffnungszeiten immer willkommen.
+            Dübendorfstrasse 22, 8051 Zürich. Donnerstag und Freitag bis 20:00,
+            auch nach der Arbeit machbar. Sonntag geschlossen.
           </p>
         </div>
         <div class="contact-list">
@@ -537,7 +404,12 @@
               <svg viewBox="0 0 24 24" focusable="false"><path d="M12 2.8a9.2 9.2 0 1 0 0 18.4 9.2 9.2 0 0 0 0-18.4Zm0 16.6a7.4 7.4 0 1 1 0-14.8 7.4 7.4 0 0 1 0 14.8Zm.9-12.2h-1.8v5.4l4.6 2.8.9-1.5-3.7-2.2V7.2Z" /></svg>
             </span>
             <span class="contact-label">Öffnungszeiten</span>
-            <strong>Mo-Sa 10:00-19:00 · So geschlossen</strong>
+            <dl class="hours-list" data-hours-list>
+              <div><dt>Mo bis Mi</dt><dd>9:00 bis 19:00</dd></div>
+              <div><dt>Do bis Fr</dt><dd>9:00 bis 20:00</dd></div>
+              <div><dt>Samstag</dt><dd>9:00 bis 18:00</dd></div>
+              <div><dt>Sonntag</dt><dd>geschlossen</dd></div>
+            </dl>
           </div>
         </div>
       </section>
@@ -551,18 +423,16 @@
           </span>
           <span>Galaxy Barbershop</span>
         </a>
-        <p>Premium Fades, saubere Konturen und Walk-ins in Zürich-Schwamendingen.</p>
+        <p>Haarschnitt CHF 20 · Walk-ins ohne Termin · Zürich-Schwamendingen</p>
         <a class="button primary footer-cta" href="https://wa.me/41766820255?text=Hallo%20Galaxy%20Barbershop%2C%20ich%20m%C3%B6chte%20einen%20Termin%20anfragen." target="_blank" rel="noopener noreferrer">Jetzt per WhatsApp</a>
       </div>
       <nav class="footer-chapters" aria-label="Kapitel">
         <h2>Kapitel</h2>
         <a href="#services">Services</a>
-        <a href="#location">Location</a>
-        <a href="#team">Team</a>
         <a href="#proof">Cut Highlights</a>
         <a href="#gallery">Galerie</a>
         <a href="#reviews">Reviews</a>
-        <a href="#booking">Termin</a>
+        <a href="#location">Location</a>
         <a href="#contact">Kontakt</a>
       </nav>
       <div class="footer-visit">

@@ -1,96 +1,3 @@
-const accessControl = {
-  enabled: true,
-  username: "bucur",
-  password: "bucurtest1234",
-  sessionHours: 12,
-  storageKey: "galaxyAccessUntil",
-};
-
-function hasActiveAccessSession() {
-  try {
-    return Number(window.localStorage.getItem(accessControl.storageKey)) > Date.now();
-  } catch (error) {
-    return false;
-  }
-}
-
-function saveAccessSession() {
-  try {
-    const expiresAt = Date.now() + accessControl.sessionHours * 60 * 60 * 1000;
-    window.localStorage.setItem(accessControl.storageKey, String(expiresAt));
-  } catch (error) {
-    // If storage is blocked, keep the page unlocked for the current load.
-  }
-}
-
-function unlockWebsite() {
-  document.documentElement.classList.remove("auth-pending", "auth-locked");
-  document.documentElement.classList.add("auth-unlocked");
-  document.body.classList.remove("lock-scroll");
-  document.querySelector("[data-auth-gate]")?.remove();
-}
-
-function showAccessGate() {
-  document.documentElement.classList.remove("auth-pending", "auth-unlocked");
-  document.documentElement.classList.add("auth-locked");
-  document.body.classList.add("lock-scroll");
-
-  if (document.querySelector("[data-auth-gate]")) {
-    return;
-  }
-
-  const gate = document.createElement("section");
-  gate.className = "auth-gate";
-  gate.dataset.authGate = "true";
-  gate.setAttribute("aria-label", "Private website access");
-  gate.innerHTML = `
-    <form class="auth-panel" data-auth-form>
-      <h1>Private access</h1>
-      <p>Enter the username and password to view Galaxy Barbershop.</p>
-      <label>
-        Username
-        <input name="username" type="text" autocomplete="username" required />
-      </label>
-      <label>
-        Password
-        <input name="password" type="password" autocomplete="current-password" required />
-      </label>
-      <button class="auth-submit" type="submit">Unlock website</button>
-      <div class="auth-error" role="status" aria-live="polite" data-auth-error></div>
-    </form>
-  `;
-
-  document.body.prepend(gate);
-  const form = gate.querySelector("[data-auth-form]");
-  const error = gate.querySelector("[data-auth-error]");
-  const username = form.elements.username;
-  const password = form.elements.password;
-
-  requestAnimationFrame(() => username.focus());
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const usernameMatches = username.value.trim() === accessControl.username;
-    const passwordMatches = password.value === accessControl.password;
-
-    if (!usernameMatches || !passwordMatches) {
-      error.textContent = "Wrong username or password.";
-      password.value = "";
-      password.focus();
-      return;
-    }
-
-    saveAccessSession();
-    unlockWebsite();
-  });
-}
-
-if (!accessControl.enabled || hasActiveAccessSession()) {
-  unlockWebsite();
-} else {
-  showAccessGate();
-}
-
 const header = document.querySelector("[data-header]");
 const hero = document.querySelector(".hero");
 const mobileActionBar = document.querySelector(".mobile-action-bar");
@@ -106,11 +13,6 @@ const reviewDots = document.querySelector("[data-review-dots]");
 const reviewPrev = document.querySelector("[data-review-prev]");
 const reviewNext = document.querySelector("[data-review-next]");
 const revealItems = document.querySelectorAll(".reveal");
-const bookingForm = document.querySelector("[data-booking-form]");
-const bookingStatus = document.querySelector("[data-booking-status]");
-const calendarDownload = document.querySelector("[data-calendar-download]");
-const googleCalendarLink = document.querySelector("[data-google-calendar]");
-const mailRequest = document.querySelector("[data-mail-request]");
 const openStatus = document.querySelector("[data-open-status]");
 const languageSelect = document.querySelector("[data-language-select]");
 
@@ -123,13 +25,6 @@ const initialHash = document.documentElement.dataset.initialHash ?? "";
 document.documentElement.classList.toggle("reveal-enabled", !(window.location.hash || initialHash));
 
 const shopPhone = "41766820255";
-const servicePrice = "CHF 20";
-const shopEmail = "";
-const barberEmails = {
-  Khaled: "",
-  Abdul: "",
-  Said: "",
-};
 
 const defaultLanguage = "de";
 let currentLanguage = defaultLanguage;
@@ -137,59 +32,48 @@ let currentLanguage = defaultLanguage;
 const translations = {
   de: {
     code: "de",
-    title: "Galaxy Barbershop Zürich | Fades, Bart & moderne Haarschnitte",
+    title: "Galaxy Barbershop Zürich | Haarschnitt CHF 20, ohne Termin",
     description:
-      "Galaxy Barbershop in Zürich-Schwamendingen. Fades, Bartpflege, moderne Herrenhaarschnitte und Kinderhaarschnitte. Dübendorfstrasse 22, 8051 Zürich.",
+      "Barbershop in Zürich-Schwamendingen: Haarschnitt CHF 20, Bart CHF 15. Walk-ins ohne Termin. 4.8 Sterne aus 119 Google-Reviews. Dübendorfstrasse 22.",
     skip: "Zum Inhalt springen",
     language: "Sprache",
-    nav: ["Services", "Location", "Team", "Galerie", "Reviews", "Termin", "Kontakt"],
+    nav: ["Services", "Location", "Galerie", "Reviews", "Kontakt"],
+    heroEyebrow: "Galaxy Barbershop · Zürich-Schwamendingen",
+    heroTitle: "Haarschnitt CHF 20. Ohne Termin.",
     heroCopy:
-      "Frische Fades, saubere Bartlinien und Walk-ins jederzeit in Zürich-Schwamendingen. Khaled, Abdul und Said sorgen dafür, dass du sauber rausgehst.",
+      "In Zürich zahlst du für einen Cut schnell CHF 50 oder mehr. Bei Khaled: saubere Fades, scharfe Konturen und 4.8 Sterne aus 119 Google-Reviews. Zum fairen Fixpreis.",
     cta: {
-      whatsapp: "Termin per WhatsApp",
+      whatsapp: "Per WhatsApp schreiben",
       call: "Anrufen",
-      booking: "Termin vorbereiten",
       route: "Route",
       reviews: "Bewertungen ansehen",
       maps: "Google Maps",
     },
-    proof: [
-      ["Walk-ins", "Immer während der Öffnungszeiten"],
-      ["4.8 Google Rating", "119 öffentliche Reviews"],
-      ["Dübendorfstrasse 22", "Direkt in Zürich-Schwamendingen"],
-    ],
     conversion: {
-      priceLabel: "Alle Cuts",
-      price: "CHF 20",
-      walkLabel: "Walk-ins",
-      walk: "Immer willkommen",
+      priceLabel: "Haarschnitt · anderswo CHF 40–80",
+      price: "nur CHF 20",
+      walkLabel: "Walk-in",
+      walk: "ohne Termin vorbeikommen",
       action: "Jetzt per WhatsApp",
+      callLabel: "Anrufen",
+      reviewsLabel: "119 Google Reviews",
     },
     intro: {
-      kicker: "Dein lokaler Barber in Zürich",
-      title: "Ein sauberer Cut macht den Unterschied, bevor du ein Wort sagst.",
-      body: "Galaxy verbindet klassische Barber-Handarbeit mit modernen Styles: klare Übergänge, scharfe Konturen, ruhige Beratung und ein Ergebnis, das auch nach ein paar Tagen noch sitzt.",
+      kicker: "Der Shop",
+      title: "Khaled schneidet. Du gehst sauber raus.",
+      body: "Khaled schneidet seit Jahren klassische und moderne Herrenstyles: klare Übergänge, scharfe Konturen, ehrliche Beratung. Immer derselbe Barber, immer dieselbe Qualität. Du weisst genau, was du bekommst.",
     },
     services: {
-      kicker: "Services",
-      title: "Für Alltag, Anlass und frischen Neustart.",
+      kicker: "Preise",
+      title: "Vier Services. Fixpreise. Kein Kleingedrucktes.",
       items: [
-        ["Haircut & Styling", "Typgerechte Herrenhaarschnitte, Beratung zu Länge, Form und Finish.", "ab 30 Min.", "Haircut & Styling · CHF 20"],
-        ["Skin Fade & Taper", "Weiche Übergänge, saubere Seiten und präzise Arbeit an den Konturen.", "ab 45 Min.", "Skin Fade & Taper · CHF 20"],
-        ["Bart & Konturen", "Beard trim, Rasur-Linien und gepflegte Form für einen klaren Look.", "ab 30 Min.", "Bart & Konturen · CHF 20"],
-        ["Kids & Teens", "Geduldige Cuts für Kinder und Jugendliche, von klassisch bis trendig.", "ab 30 Min.", "Kids & Teens · CHF 20"],
+        ["Haarschnitt & Styling", "Typgerechte Herrenhaarschnitte inklusive Fades und Taper, mit Beratung zu Länge, Form und Finish.", "ab 30 Min.", "Haarschnitt & Styling · CHF 20"],
+        ["Bart & Konturen", "Beard Trim, Rasur-Linien und gepflegte Form für einen klaren Look.", "ab 20 Min.", "Bart & Konturen · CHF 15"],
+        ["Haarschnitt & Bart", "Das Komplettpaket: frischer Cut und gepflegter Bart in einem Termin.", "ab 45 Min.", "Haarschnitt & Bart · CHF 35"],
+        ["Kinder bis 12 Jahre", "Geduldige Haarschnitte für Kinder bis 12 Jahre, von klassisch bis trendig.", "ab 30 Min.", "Kinder bis 12 Jahre · CHF 15"],
       ],
       choose: "Service wählen",
-      lead: "Alle Services kosten CHF 20. Walk-ins sind während der Öffnungszeiten willkommen.",
-    },
-    team: {
-      kicker: "Team",
-      title: "Drei Barbers, ein Anspruch: sauber rausgehen.",
-      bios: [
-        ["Khaled", "Ruhige Beratung, präzise Linien und Erfahrung mit klassischen sowie modernen Herrenstyles.", ["Klassische Cuts", "Saubere Linien", "Beratung"]],
-        ["Abdul", "Stark bei Fades, Übergängen und Cuts, die im Alltag unkompliziert sitzen.", ["Skin Fades", "Taper", "Moderne Styles"]],
-        ["Said", "Saubere Konturen, Bartpflege und ein Blick für Details, die den Look komplett machen.", ["Bart", "Konturen", "Detailarbeit"]],
-      ],
+      lead: "Zum Vergleich: ein Herrenhaarschnitt kostet in Zürich meist CHF 40 bis 80. Hier: CHF 20. Und du brauchst keinen Termin.",
     },
     proofCards: {
       kicker: "Cut Highlights",
@@ -204,20 +88,21 @@ const translations = {
     location: {
       kicker: "Location",
       title: "Dunkles Holz, Leder und warmes Licht.",
-      body: "Der Shop fühlt sich ruhig und hochwertig an: dunkle Wände, Ledersitze, Spiegel und saubere Stationen geben dem Cut den richtigen Rahmen.",
+      body: "Dübendorfstrasse 22, direkt in Schwamendingen. Kein Schickimicki: ein sauberer, ruhiger Shop mit Ledersitzen und warmem Licht. Kurz warten, frisch rausgehen.",
       tags: ["Ledersitze", "warmes Licht", "saubere Barber-Stationen"],
       caption: "Dübendorfstrasse 22 · Zürich-Schwamendingen",
       alt: "Dunkler Barberraum mit Lederlounge, warmem Licht und Checkerboard-Boden im Galaxy Barbershop Zürich",
     },
     gallery: {
       kicker: "Galerie",
-      title: "Echte Arbeit aus dem Shop.",
+      title: "Frische Cuts aus dem Shop.",
+      lead: "Echte Kunden, echte Ergebnisse. Tippe auf ein Bild für die Grossansicht.",
       expand: "Bild vergrößern",
     },
     reviews: {
       kicker: "Google Reviews",
-      title: "Vertrauen, bevor der erste Schnitt beginnt.",
-      body: "Ausgewählte öffentliche Stimmen zeigen schnell, was Kunden schätzen. Wer mehr lesen oder selbst bewerten möchte, kommt direkt zur offiziellen Google-Seite.",
+      title: "4.8 Sterne. 119 Reviews. Alle öffentlich auf Google.",
+      body: "Nichts davon steht nur auf unserer Seite. Jede Bewertung ist auf Google nachlesbar. Schau selbst, was Kunden über Fades, Bart und Wartezeit sagen.",
       outOf: "von 5 Sternen",
       count: "119 Google Reviews",
       read: "Reviews lesen",
@@ -230,59 +115,25 @@ const translations = {
       readMore: "Mehr lesen",
       showLess: "Weniger anzeigen",
     },
-    booking: {
-      kicker: "Termin",
-      title: "Reserviere deinen nächsten Cut.",
-      body: "Füll kurz die wichtigsten Details aus und sende die Anfrage direkt per WhatsApp. Kalenderdateien sind danach nur ein optionaler Bonus für dich.",
-      ready: "Antwort meist während der Öffnungszeiten.",
-      labels: ["Name", "E-Mail", "Telefon", "Barber", "Service", "Datum", "Zeit", "Dauer", "Wünsche"],
-      placeholders: ["Vorname Nachname", "name@email.com", "+41 ...", "Fade, Bart, Kinderhaarschnitt, bevorzugter Stil ..."],
-      chooseBarber: "Barber wählen",
-      chooseTime: "Zeit wählen",
-      durations: ["30 Minuten", "45 Minuten", "60 Minuten"],
-      actions: ["WhatsApp vorbereiten", "WhatsApp senden", "Kalenderdatei", "Google Calendar"],
-      privacy:
-        "Deine Angaben werden nur in der Kalenderdatei und in der vorbereiteten Anfrage verwendet. Es wird nichts automatisch an externe Server gesendet.",
-      errors: {
-        invalid: "Bitte wähle ein gültiges Datum und eine gültige Zeit.",
-        sunday: "Bitte wähle einen Termin von Montag bis Samstag.",
-        hours: "Bitte wähle eine Zeit, bei der der Termin vollständig zwischen 10:00 und 19:00 liegt.",
-      },
-      success:
-        "Bereit: Sende jetzt die WhatsApp-Anfrage an den Shop. Kalenderdatei und Google Calendar sind optional.",
-    },
     contact: {
       kicker: "Kontakt",
-      title: "Komm vorbei oder ruf kurz an.",
-      body: "Galaxy Barbershop liegt an der Dübendorfstrasse 22 in 8051 Zürich. Walk-ins sind während der Öffnungszeiten immer willkommen.",
+      title: "Ohne Termin vorbeikommen. Oder kurz schreiben.",
+      body: "Dübendorfstrasse 22, 8051 Zürich. Donnerstag und Freitag bis 20:00, auch nach der Arbeit machbar. Sonntag geschlossen.",
       labels: ["Telefon", "WhatsApp", "Adresse", "Öffnungszeiten"],
       whatsapp: "Direkt schreiben",
-      hours: "Mo-Sa 10:00-19:00 · So geschlossen",
+      hours: [["Mo bis Mi", "9:00 bis 19:00"], ["Do bis Fr", "9:00 bis 20:00"], ["Samstag", "9:00 bis 18:00"], ["Sonntag", "geschlossen"]],
       top: "Nach oben",
     },
     footer: {
-      body: "Premium Fades, saubere Konturen und Walk-ins in Zürich-Schwamendingen.",
+      body: "Haarschnitt CHF 20 · Walk-ins ohne Termin · Zürich-Schwamendingen",
       chapters: "Kapitel",
       visit: "Besuch",
     },
     open: {
-      sunday: "Heute geschlossen · Mo-Sa 10:00-19:00",
-      before: "Heute ab 10:00 geöffnet",
-      active: "Jetzt offen bis 19:00",
-      after: "Heute geschlossen · Morgen ab 10:00",
-    },
-    message: {
-      intro: "Hallo Galaxy Barbershop, ich möchte einen Termin per WhatsApp anfragen:",
-      name: "Name",
-      phone: "Telefon",
-      email: "E-Mail",
-      barber: "Barber",
-      service: "Service",
-      price: "Preis",
-      dateTime: "Datum/Zeit",
-      duration: "Dauer",
-      notes: "Wünsche",
-      requestSubject: "Termin Anfrage",
+      sunday: "Heute geschlossen · Mo-Mi 9-19 · Do-Fr 9-20 · Sa 9-18",
+      before: "Heute ab 9:00 geöffnet",
+      active: "Jetzt offen bis {close}",
+      after: "Für heute geschlossen · Morgen ab 9:00",
     },
     navToggleOpen: "Navigation öffnen",
     navToggleClose: "Navigation schließen",
@@ -290,59 +141,48 @@ const translations = {
   },
   en: {
     code: "en",
-    title: "Galaxy Barbershop Zurich | Fades, Beard & Modern Cuts",
+    title: "Galaxy Barbershop Zurich | Haircut CHF 20, No Appointment",
     description:
-      "Galaxy Barbershop in Zurich-Schwamendingen. Fades, beard care, modern men's haircuts and kids' cuts. Dübendorfstrasse 22, 8051 Zurich.",
+      "Barbershop in Zurich-Schwamendingen: haircut CHF 20, beard CHF 15. Walk-ins, no appointment. 4.8 stars from 119 Google reviews. Dübendorfstrasse 22.",
     skip: "Skip to content",
     language: "Language",
-    nav: ["Services", "Location", "Team", "Gallery", "Reviews", "Booking", "Contact"],
+    nav: ["Services", "Location", "Gallery", "Reviews", "Contact"],
+    heroEyebrow: "Galaxy Barbershop · Zurich-Schwamendingen",
+    heroTitle: "Haircut CHF 20. No appointment.",
     heroCopy:
-      "Fresh fades, sharp beard lines and walk-ins anytime in Zurich-Schwamendingen. Khaled, Abdul and Said make sure you leave looking clean.",
+      "In Zurich a cut easily costs CHF 50 or more. At Khaled's: clean fades, sharp contours and 4.8 stars from 119 Google reviews. At a fair fixed price.",
     cta: {
-      whatsapp: "Book via WhatsApp",
+      whatsapp: "Message us on WhatsApp",
       call: "Call",
-      booking: "Prepare booking",
       route: "Directions",
       reviews: "See reviews",
       maps: "Google Maps",
     },
-    proof: [
-      ["Walk-ins", "Always during opening hours"],
-      ["4.8 Google rating", "119 public reviews"],
-      ["Dübendorfstrasse 22", "Right in Zurich-Schwamendingen"],
-    ],
     conversion: {
-      priceLabel: "All cuts",
-      price: "CHF 20",
-      walkLabel: "Walk-ins",
-      walk: "Always welcome",
+      priceLabel: "Haircut · elsewhere CHF 40–80",
+      price: "only CHF 20",
+      walkLabel: "Walk-in",
+      walk: "drop by without an appointment",
       action: "WhatsApp now",
+      callLabel: "Call",
+      reviewsLabel: "119 Google Reviews",
     },
     intro: {
-      kicker: "Your local barber in Zurich",
-      title: "A clean cut speaks before you say a word.",
-      body: "Galaxy blends classic barber craft with modern styles: clean transitions, sharp contours, calm advice and a result that still sits right days later.",
+      kicker: "The shop",
+      title: "Khaled cuts. You leave looking clean.",
+      body: "Khaled has been cutting classic and modern men's styles for years: clean transitions, sharp contours, honest advice. Always the same barber, always the same quality. You know exactly what you get.",
     },
     services: {
-      kicker: "Services",
-      title: "For everyday life, occasions and a fresh reset.",
+      kicker: "Prices",
+      title: "Four services. Fixed prices. No fine print.",
       items: [
-        ["Haircut & Styling", "Men's cuts tailored to your type, with advice on length, shape and finish.", "from 30 min.", "Haircut & Styling · CHF 20"],
-        ["Skin Fade & Taper", "Soft transitions, clean sides and precise contour work.", "from 45 min.", "Skin Fade & Taper · CHF 20"],
-        ["Beard & Contours", "Beard trim, razor lines and a clean shape for a sharp look.", "from 30 min.", "Beard & Contours · CHF 20"],
-        ["Kids & Teens", "Patient cuts for kids and teens, from classic to trendy.", "from 30 min.", "Kids & Teens · CHF 20"],
+        ["Haircut & Styling", "Men's cuts tailored to your type, including fades and tapers, with advice on length, shape and finish.", "from 30 min.", "Haircut & Styling · CHF 20"],
+        ["Beard & Contours", "Beard trim, razor lines and a clean shape for a sharp look.", "from 20 min.", "Beard & Contours · CHF 15"],
+        ["Haircut & Beard", "The full package: a fresh cut and a groomed beard in one visit.", "from 45 min.", "Haircut & Beard · CHF 35"],
+        ["Kids up to 12", "Patient haircuts for kids up to 12 years, from classic to trendy.", "from 30 min.", "Kids up to 12 · CHF 15"],
       ],
       choose: "Choose service",
-      lead: "All services cost CHF 20. Walk-ins are welcome during opening hours.",
-    },
-    team: {
-      kicker: "Team",
-      title: "Three barbers, one standard: leave clean.",
-      bios: [
-        ["Khaled", "Calm consultation, precise lines and experience with classic and modern men's styles.", ["Classic cuts", "Clean lines", "Advice"]],
-        ["Abdul", "Strong with fades, transitions and cuts that are easy to wear every day.", ["Skin fades", "Taper", "Modern styles"]],
-        ["Said", "Clean contours, beard care and an eye for details that complete the look.", ["Beard", "Contours", "Detail work"]],
-      ],
+      lead: "For comparison: a men's haircut in Zurich usually costs CHF 40 to 80. Here: CHF 20. And you don't need an appointment.",
     },
     proofCards: {
       kicker: "Cut highlights",
@@ -357,16 +197,16 @@ const translations = {
     location: {
       kicker: "Location",
       title: "Dark wood, leather and warm light.",
-      body: "The shop feels calm and premium: dark walls, leather seating, mirrors and clean stations give every cut the right setting.",
+      body: "Dübendorfstrasse 22, right in Schwamendingen. No frills: a clean, calm shop with leather seating and warm light. Wait a bit, walk out fresh.",
       tags: ["Leather seating", "Warm lighting", "Clean barber stations"],
       caption: "Dübendorfstrasse 22 · Zurich-Schwamendingen",
       alt: "Dark barber room with leather lounge, warm lighting and checkerboard floor inside Galaxy Barbershop Zurich",
     },
-    gallery: { kicker: "Gallery", title: "Real work from the shop.", expand: "Enlarge image" },
+    gallery: { kicker: "Gallery", title: "Fresh cuts from the shop.", lead: "Real customers, real results. Tap an image for the full view.", expand: "Enlarge image" },
     reviews: {
       kicker: "Google Reviews",
-      title: "Trust before the first cut.",
-      body: "Selected public voices quickly show what customers value. Anyone who wants to read more or leave a review goes straight to the official Google page.",
+      title: "4.8 stars. 119 reviews. All public on Google.",
+      body: "None of this lives only on our site. Every review can be read on Google. See for yourself what customers say about fades, beards and waiting time.",
       outOf: "out of 5 stars",
       count: "119 Google Reviews",
       read: "Read reviews",
@@ -379,57 +219,25 @@ const translations = {
       readMore: "Read more",
       showLess: "Show less",
     },
-    booking: {
-      kicker: "Booking",
-      title: "Reserve your next cut.",
-      body: "Add the key details and send the request directly via WhatsApp. Calendar files are only an optional bonus afterwards.",
-      ready: "Replies usually come during opening hours.",
-      labels: ["Name", "Email", "Phone", "Barber", "Service", "Date", "Time", "Duration", "Requests"],
-      placeholders: ["First name Last name", "name@email.com", "+41 ...", "Fade, beard, kids' cut, preferred style ..."],
-      chooseBarber: "Choose barber",
-      chooseTime: "Choose time",
-      durations: ["30 minutes", "45 minutes", "60 minutes"],
-      actions: ["Prepare WhatsApp", "Send WhatsApp", "Calendar file", "Google Calendar"],
-      privacy: "Your details are only used in the calendar file and prepared request. Nothing is sent automatically to external servers.",
-      errors: {
-        invalid: "Please choose a valid date and time.",
-        sunday: "Please choose an appointment from Monday to Saturday.",
-        hours: "Please choose a time where the full appointment fits between 10:00 and 19:00.",
-      },
-      success: "Ready: send the WhatsApp request to the shop now. Calendar file and Google Calendar are optional.",
-    },
     contact: {
       kicker: "Contact",
-      title: "Come by or call quickly.",
-      body: "Galaxy Barbershop is located at Dübendorfstrasse 22 in 8051 Zurich. Walk-ins are always welcome during opening hours.",
+      title: "Drop by without an appointment. Or just message us.",
+      body: "Dübendorfstrasse 22, 8051 Zurich. Thursday and Friday until 20:00, doable after work too. Closed on Sunday.",
       labels: ["Phone", "WhatsApp", "Address", "Opening hours"],
       whatsapp: "Message directly",
-      hours: "Mon-Sat 10:00-19:00 · Sun closed",
+      hours: [["Mon to Wed", "9:00 to 19:00"], ["Thu to Fri", "9:00 to 20:00"], ["Saturday", "9:00 to 18:00"], ["Sunday", "closed"]],
       top: "Back to top",
     },
     footer: {
-      body: "Premium fades, clean contours and walk-ins in Zurich-Schwamendingen.",
+      body: "Haircut CHF 20 · Walk-ins, no appointment · Zurich-Schwamendingen",
       chapters: "Chapters",
       visit: "Visit",
     },
     open: {
-      sunday: "Closed today · Mon-Sat 10:00-19:00",
-      before: "Open today from 10:00",
-      active: "Open now until 19:00",
-      after: "Closed today · Tomorrow from 10:00",
-    },
-    message: {
-      intro: "Hello Galaxy Barbershop, I would like to request an appointment via WhatsApp:",
-      name: "Name",
-      phone: "Phone",
-      email: "Email",
-      barber: "Barber",
-      service: "Service",
-      price: "Price",
-      dateTime: "Date/time",
-      duration: "Duration",
-      notes: "Requests",
-      requestSubject: "Appointment request",
+      sunday: "Closed today · Mon-Wed 9-19 · Thu-Fri 9-20 · Sat 9-18",
+      before: "Open today from 9:00",
+      active: "Open now until {close}",
+      after: "Closed for today · Tomorrow from 9:00",
     },
     navToggleOpen: "Open navigation",
     navToggleClose: "Close navigation",
@@ -437,59 +245,48 @@ const translations = {
   },
   fr: {
     code: "fr",
-    title: "Galaxy Barbershop Zurich | Fades, barbe et coupes modernes",
+    title: "Galaxy Barbershop Zurich | Coupe CHF 20, sans rendez-vous",
     description:
-      "Galaxy Barbershop à Zurich-Schwamendingen. Fades, soin de la barbe, coupes modernes pour hommes et enfants. Dübendorfstrasse 22, 8051 Zurich.",
+      "Barbershop à Zurich-Schwamendingen : coupe CHF 20, barbe CHF 15. Walk-ins sans rendez-vous. 4.8 étoiles sur 119 avis Google. Dübendorfstrasse 22.",
     skip: "Aller au contenu",
     language: "Langue",
-    nav: ["Services", "Location", "Équipe", "Galerie", "Avis", "Rendez-vous", "Contact"],
+    nav: ["Services", "Location", "Galerie", "Avis", "Contact"],
+    heroEyebrow: "Galaxy Barbershop · Zurich-Schwamendingen",
+    heroTitle: "Coupe CHF 20. Sans rendez-vous.",
     heroCopy:
-      "Fades frais, contours de barbe nets et walk-ins à tout moment à Zurich-Schwamendingen. Khaled, Abdul et Said te font sortir avec un look propre.",
+      "À Zurich, une coupe coûte vite CHF 50 ou plus. Chez Khaled : fades propres, contours nets et 4.8 étoiles sur 119 avis Google. À un prix fixe équitable.",
     cta: {
-      whatsapp: "Réserver par WhatsApp",
+      whatsapp: "Écrire sur WhatsApp",
       call: "Appeler",
-      booking: "Préparer le rendez-vous",
       route: "Itinéraire",
       reviews: "Voir les avis",
       maps: "Google Maps",
     },
-    proof: [
-      ["Walk-ins", "Toujours pendant les heures d'ouverture"],
-      ["Note Google 4.8", "119 avis publics"],
-      ["Dübendorfstrasse 22", "Au cœur de Zurich-Schwamendingen"],
-    ],
     conversion: {
-      priceLabel: "Toutes les coupes",
-      price: "CHF 20",
-      walkLabel: "Walk-ins",
-      walk: "Toujours bienvenus",
+      priceLabel: "Coupe · ailleurs CHF 40–80",
+      price: "seulement CHF 20",
+      walkLabel: "Walk-in",
+      walk: "passe sans rendez-vous",
       action: "WhatsApp maintenant",
+      callLabel: "Appeler",
+      reviewsLabel: "119 avis Google",
     },
     intro: {
-      kicker: "Ton barber local à Zurich",
-      title: "Une coupe propre parle avant même que tu dises un mot.",
-      body: "Galaxy associe le savoir-faire barber classique à des styles modernes : transitions nettes, contours précis, conseil calme et un résultat qui reste bien en place après quelques jours.",
+      kicker: "Le shop",
+      title: "Khaled coupe. Tu ressors propre.",
+      body: "Khaled coupe depuis des années des styles hommes classiques et modernes : transitions nettes, contours précis, conseil honnête. Toujours le même barber, toujours la même qualité. Tu sais exactement ce que tu obtiens.",
     },
     services: {
-      kicker: "Services",
-      title: "Pour le quotidien, les occasions et un nouveau départ.",
+      kicker: "Prix",
+      title: "Quatre services. Prix fixes. Pas de petites lignes.",
       items: [
-        ["Haircut & Styling", "Coupes hommes adaptées à ton style, avec conseil sur la longueur, la forme et la finition.", "dès 30 min.", "Haircut & Styling · CHF 20"],
-        ["Skin Fade & Taper", "Transitions douces, côtés propres et contours précis.", "dès 45 min.", "Skin Fade & Taper · CHF 20"],
-        ["Barbe & Contours", "Taille de barbe, lignes au rasoir et forme nette pour un look précis.", "dès 30 min.", "Barbe & Contours · CHF 20"],
-        ["Kids & Teens", "Coupes patientes pour enfants et ados, du classique au tendance.", "dès 30 min.", "Kids & Teens · CHF 20"],
+        ["Coupe & Styling", "Coupes hommes adaptées à ton style, fades et tapers inclus, avec conseil sur la longueur, la forme et la finition.", "dès 30 min.", "Coupe & Styling · CHF 20"],
+        ["Barbe & Contours", "Taille de barbe, lignes au rasoir et forme nette pour un look précis.", "dès 20 min.", "Barbe & Contours · CHF 15"],
+        ["Coupe & Barbe", "La formule complète : coupe fraîche et barbe soignée en un seul rendez-vous.", "dès 45 min.", "Coupe & Barbe · CHF 35"],
+        ["Enfants jusqu'à 12 ans", "Coupes patientes pour les enfants jusqu'à 12 ans, du classique au tendance.", "dès 30 min.", "Enfants jusqu'à 12 ans · CHF 15"],
       ],
       choose: "Choisir un service",
-      lead: "Tous les services coûtent CHF 20. Les walk-ins sont bienvenus pendant les heures d'ouverture.",
-    },
-    team: {
-      kicker: "Équipe",
-      title: "Trois barbers, une exigence : sortir propre.",
-      bios: [
-        ["Khaled", "Conseil calme, lignes précises et expérience avec les styles hommes classiques et modernes.", ["Coupes classiques", "Lignes nettes", "Conseil"]],
-        ["Abdul", "Très fort en fades, transitions et coupes faciles à porter au quotidien.", ["Skin fades", "Taper", "Styles modernes"]],
-        ["Said", "Contours nets, soin de la barbe et sens du détail qui complète le look.", ["Barbe", "Contours", "Détails"]],
-      ],
+      lead: "Pour comparer : une coupe homme coûte à Zurich en général CHF 40 à 80. Ici : CHF 20. Et tu n'as pas besoin de rendez-vous.",
     },
     proofCards: {
       kicker: "Points forts",
@@ -504,16 +301,16 @@ const translations = {
     location: {
       kicker: "Location",
       title: "Bois sombre, cuir et lumière chaude.",
-      body: "Le shop offre une ambiance calme et premium : murs sombres, sièges en cuir, miroirs et stations propres donnent le bon cadre à chaque coupe.",
+      body: "Dübendorfstrasse 22, en plein Schwamendingen. Rien de tape-à-l'œil : un shop propre et calme avec sièges en cuir et lumière chaude. Une courte attente, et tu ressors frais.",
       tags: ["Sièges en cuir", "Lumière chaude", "Stations barber propres"],
       caption: "Dübendorfstrasse 22 · Zurich-Schwamendingen",
       alt: "Salle de barber sombre avec lounge en cuir, lumière chaude et sol damier chez Galaxy Barbershop Zurich",
     },
-    gallery: { kicker: "Galerie", title: "Du vrai travail réalisé au shop.", expand: "Agrandir l'image" },
+    gallery: { kicker: "Galerie", title: "Des coupes fraîches du shop.", lead: "De vrais clients, de vrais résultats. Touche une image pour l'agrandir.", expand: "Agrandir l'image" },
     reviews: {
       kicker: "Avis Google",
-      title: "La confiance avant le premier coup de tondeuse.",
-      body: "Des voix publiques sélectionnées montrent vite ce que les clients apprécient. Pour lire plus ou laisser un avis, tu arrives directement sur la page Google officielle.",
+      title: "4.8 étoiles. 119 avis. Tous publics sur Google.",
+      body: "Rien de tout ça n'existe que sur notre site. Chaque avis est lisible sur Google. Regarde toi-même ce que les clients disent des fades, de la barbe et de l'attente.",
       outOf: "sur 5 étoiles",
       count: "119 avis Google",
       read: "Lire les avis",
@@ -526,57 +323,25 @@ const translations = {
       readMore: "Lire plus",
       showLess: "Réduire",
     },
-    booking: {
-      kicker: "Rendez-vous",
-      title: "Réserve ta prochaine coupe.",
-      body: "Ajoute les détails importants et envoie la demande directement par WhatsApp. Les fichiers calendrier restent seulement un bonus optionnel.",
-      ready: "Réponse généralement pendant les heures d'ouverture.",
-      labels: ["Nom", "E-mail", "Téléphone", "Barber", "Service", "Date", "Heure", "Durée", "Souhaits"],
-      placeholders: ["Prénom Nom", "nom@email.com", "+41 ...", "Fade, barbe, coupe enfant, style préféré ..."],
-      chooseBarber: "Choisir un barber",
-      chooseTime: "Choisir l'heure",
-      durations: ["30 minutes", "45 minutes", "60 minutes"],
-      actions: ["Préparer WhatsApp", "Envoyer WhatsApp", "Fichier calendrier", "Google Calendar"],
-      privacy: "Tes données sont uniquement utilisées dans le fichier calendrier et la demande préparée. Rien n'est envoyé automatiquement à des serveurs externes.",
-      errors: {
-        invalid: "Choisis une date et une heure valides.",
-        sunday: "Choisis un rendez-vous du lundi au samedi.",
-        hours: "Choisis une heure où le rendez-vous complet tient entre 10:00 et 19:00.",
-      },
-      success: "Prêt : envoie maintenant la demande WhatsApp au shop. Le fichier calendrier et Google Calendar sont optionnels.",
-    },
     contact: {
       kicker: "Contact",
-      title: "Passe au shop ou appelle rapidement.",
-      body: "Galaxy Barbershop se trouve à la Dübendorfstrasse 22, 8051 Zurich. Les walk-ins sont toujours bienvenus pendant les heures d'ouverture.",
+      title: "Passe sans rendez-vous. Ou écris-nous vite.",
+      body: "Dübendorfstrasse 22, 8051 Zurich. Jeudi et vendredi jusqu'à 20:00, faisable aussi après le travail. Fermé le dimanche.",
       labels: ["Téléphone", "WhatsApp", "Adresse", "Horaires"],
       whatsapp: "Écrire directement",
-      hours: "Lun-sam 10:00-19:00 · Dim fermé",
+      hours: [["Lun à mer", "9:00 à 19:00"], ["Jeu à ven", "9:00 à 20:00"], ["Samedi", "9:00 à 18:00"], ["Dimanche", "fermé"]],
       top: "Retour en haut",
     },
     footer: {
-      body: "Fades premium, contours nets et walk-ins à Zurich-Schwamendingen.",
+      body: "Coupe CHF 20 · Walk-ins sans rendez-vous · Zurich-Schwamendingen",
       chapters: "Chapitres",
       visit: "Visite",
     },
     open: {
-      sunday: "Fermé aujourd'hui · Lun-sam 10:00-19:00",
-      before: "Ouvert aujourd'hui dès 10:00",
-      active: "Ouvert maintenant jusqu'à 19:00",
-      after: "Fermé aujourd'hui · Demain dès 10:00",
-    },
-    message: {
-      intro: "Bonjour Galaxy Barbershop, je souhaite demander un rendez-vous par WhatsApp :",
-      name: "Nom",
-      phone: "Téléphone",
-      email: "E-mail",
-      barber: "Barber",
-      service: "Service",
-      price: "Prix",
-      dateTime: "Date/heure",
-      duration: "Durée",
-      notes: "Souhaits",
-      requestSubject: "Demande de rendez-vous",
+      sunday: "Fermé aujourd'hui · Lun-mer 9-19 · Jeu-ven 9-20 · Sam 9-18",
+      before: "Ouvert aujourd'hui dès 9:00",
+      active: "Ouvert maintenant jusqu'à {close}",
+      after: "Fermé pour aujourd'hui · Demain dès 9:00",
     },
     navToggleOpen: "Ouvrir la navigation",
     navToggleClose: "Fermer la navigation",
@@ -584,59 +349,48 @@ const translations = {
   },
   it: {
     code: "it",
-    title: "Galaxy Barbershop Zurigo | Fades, barba e tagli moderni",
+    title: "Galaxy Barbershop Zurigo | Taglio CHF 20, senza appuntamento",
     description:
-      "Galaxy Barbershop a Zurigo-Schwamendingen. Fades, cura della barba, tagli moderni da uomo e tagli per bambini. Dübendorfstrasse 22, 8051 Zurigo.",
+      "Barbershop a Zurigo-Schwamendingen: taglio CHF 20, barba CHF 15. Walk-in senza appuntamento. 4.8 stelle da 119 recensioni Google. Dübendorfstrasse 22.",
     skip: "Vai al contenuto",
     language: "Lingua",
-    nav: ["Servizi", "Location", "Team", "Galleria", "Recensioni", "Appuntamento", "Contatto"],
+    nav: ["Servizi", "Location", "Galleria", "Recensioni", "Contatto"],
+    heroEyebrow: "Galaxy Barbershop · Zurigo-Schwamendingen",
+    heroTitle: "Taglio CHF 20. Senza appuntamento.",
     heroCopy:
-      "Fades freschi, linee barba pulite e walk-in sempre possibili a Zurigo-Schwamendingen. Khaled, Abdul e Said ti fanno uscire con un look impeccabile.",
+      "A Zurigo un taglio costa facilmente CHF 50 o più. Da Khaled: fade puliti, contorni precisi e 4.8 stelle da 119 recensioni Google. A un prezzo fisso onesto.",
     cta: {
-      whatsapp: "Prenota via WhatsApp",
+      whatsapp: "Scrivici su WhatsApp",
       call: "Chiama",
-      booking: "Prepara appuntamento",
       route: "Indicazioni",
       reviews: "Vedi recensioni",
       maps: "Google Maps",
     },
-    proof: [
-      ["Walk-in", "Sempre durante gli orari di apertura"],
-      ["Valutazione Google 4.8", "119 recensioni pubbliche"],
-      ["Dübendorfstrasse 22", "A Zurigo-Schwamendingen"],
-    ],
     conversion: {
-      priceLabel: "Tutti i tagli",
-      price: "CHF 20",
+      priceLabel: "Taglio · altrove CHF 40–80",
+      price: "solo CHF 20",
       walkLabel: "Walk-in",
-      walk: "Sempre benvenuti",
+      walk: "passa senza appuntamento",
       action: "WhatsApp ora",
+      callLabel: "Chiama",
+      reviewsLabel: "119 recensioni Google",
     },
     intro: {
-      kicker: "Il tuo barber locale a Zurigo",
-      title: "Un taglio pulito parla prima ancora di te.",
-      body: "Galaxy unisce il mestiere classico del barber a stili moderni: sfumature pulite, contorni precisi, consulenza tranquilla e un risultato che resta ordinato anche dopo alcuni giorni.",
+      kicker: "Il shop",
+      title: "Khaled taglia. Tu esci in ordine.",
+      body: "Khaled taglia da anni stili da uomo classici e moderni: sfumature pulite, contorni precisi, consigli onesti. Sempre lo stesso barber, sempre la stessa qualità. Sai esattamente cosa ottieni.",
     },
     services: {
-      kicker: "Servizi",
-      title: "Per ogni giorno, occasioni e un nuovo inizio.",
+      kicker: "Prezzi",
+      title: "Quattro servizi. Prezzi fissi. Niente clausole nascoste.",
       items: [
-        ["Haircut & Styling", "Tagli uomo su misura, con consulenza su lunghezza, forma e finish.", "da 30 min.", "Haircut & Styling · CHF 20"],
-        ["Skin Fade & Taper", "Sfumature morbide, lati puliti e lavoro preciso sui contorni.", "da 45 min.", "Skin Fade & Taper · CHF 20"],
-        ["Barba & Contorni", "Rifinitura barba, linee a rasoio e forma curata per un look netto.", "da 30 min.", "Barba & Contorni · CHF 20"],
-        ["Kids & Teens", "Tagli pazienti per bambini e ragazzi, dal classico al trendy.", "da 30 min.", "Kids & Teens · CHF 20"],
+        ["Taglio & Styling", "Tagli uomo su misura, fade e taper inclusi, con consulenza su lunghezza, forma e finish.", "da 30 min.", "Taglio & Styling · CHF 20"],
+        ["Barba & Contorni", "Rifinitura barba, linee a rasoio e forma curata per un look netto.", "da 20 min.", "Barba & Contorni · CHF 15"],
+        ["Taglio & Barba", "Il pacchetto completo: taglio fresco e barba curata in un solo appuntamento.", "da 45 min.", "Taglio & Barba · CHF 35"],
+        ["Bambini fino a 12 anni", "Tagli pazienti per bambini fino a 12 anni, dal classico al trendy.", "da 30 min.", "Bambini fino a 12 anni · CHF 15"],
       ],
       choose: "Scegli servizio",
-      lead: "Tutti i servizi costano CHF 20. I walk-in sono benvenuti durante gli orari di apertura.",
-    },
-    team: {
-      kicker: "Team",
-      title: "Tre barber, uno standard: uscire puliti.",
-      bios: [
-        ["Khaled", "Consulenza calma, linee precise ed esperienza con stili uomo classici e moderni.", ["Tagli classici", "Linee pulite", "Consulenza"]],
-        ["Abdul", "Forte su fades, transizioni e tagli facili da portare ogni giorno.", ["Skin fades", "Taper", "Stili moderni"]],
-        ["Said", "Contorni puliti, cura della barba e attenzione ai dettagli che completano il look.", ["Barba", "Contorni", "Dettagli"]],
-      ],
+      lead: "Per confronto: un taglio da uomo a Zurigo costa di solito da CHF 40 a 80. Qui: CHF 20. E non ti serve un appuntamento.",
     },
     proofCards: {
       kicker: "Dettagli del taglio",
@@ -651,16 +405,16 @@ const translations = {
     location: {
       kicker: "Location",
       title: "Legno scuro, pelle e luce calda.",
-      body: "Il shop trasmette calma e qualità: pareti scure, sedute in pelle, specchi e postazioni pulite danno a ogni taglio la cornice giusta.",
+      body: "Dübendorfstrasse 22, in pieno Schwamendingen. Niente fronzoli: un shop pulito e tranquillo con sedute in pelle e luce calda. Una breve attesa, ed esci fresco.",
       tags: ["Sedute in pelle", "Luce calda", "Postazioni barber pulite"],
       caption: "Dübendorfstrasse 22 · Zurigo-Schwamendingen",
       alt: "Sala barber scura con lounge in pelle, luce calda e pavimento a scacchi nel Galaxy Barbershop Zurigo",
     },
-    gallery: { kicker: "Galleria", title: "Lavori veri dal shop.", expand: "Ingrandisci immagine" },
+    gallery: { kicker: "Galleria", title: "Tagli freschi dal shop.", lead: "Clienti veri, risultati veri. Tocca un'immagine per ingrandirla.", expand: "Ingrandisci immagine" },
     reviews: {
       kicker: "Recensioni Google",
-      title: "Fiducia prima del primo taglio.",
-      body: "Voci pubbliche selezionate mostrano subito cosa apprezzano i clienti. Chi vuole leggere di più o lasciare una recensione arriva direttamente alla pagina ufficiale di Google.",
+      title: "4.8 stelle. 119 recensioni. Tutte pubbliche su Google.",
+      body: "Niente di tutto questo esiste solo sul nostro sito. Ogni recensione è leggibile su Google. Guarda tu stesso cosa dicono i clienti su fade, barba e attesa.",
       outOf: "su 5 stelle",
       count: "119 recensioni Google",
       read: "Leggi recensioni",
@@ -673,57 +427,25 @@ const translations = {
       readMore: "Leggi di più",
       showLess: "Mostra meno",
     },
-    booking: {
-      kicker: "Appuntamento",
-      title: "Prenota il tuo prossimo taglio.",
-      body: "Aggiungi i dettagli principali e invia la richiesta direttamente via WhatsApp. I file calendario sono solo un bonus opzionale dopo.",
-      ready: "Risposta di solito durante gli orari di apertura.",
-      labels: ["Nome", "E-mail", "Telefono", "Barber", "Servizio", "Data", "Ora", "Durata", "Richieste"],
-      placeholders: ["Nome Cognome", "nome@email.com", "+41 ...", "Fade, barba, taglio bambino, stile preferito ..."],
-      chooseBarber: "Scegli barber",
-      chooseTime: "Scegli ora",
-      durations: ["30 minuti", "45 minuti", "60 minuti"],
-      actions: ["Prepara WhatsApp", "Invia WhatsApp", "File calendario", "Google Calendar"],
-      privacy: "I tuoi dati vengono usati solo nel file calendario e nella richiesta preparata. Nulla viene inviato automaticamente a server esterni.",
-      errors: {
-        invalid: "Scegli una data e un'ora valide.",
-        sunday: "Scegli un appuntamento dal lunedì al sabato.",
-        hours: "Scegli un orario in cui tutto l'appuntamento rientra tra le 10:00 e le 19:00.",
-      },
-      success: "Pronto: invia ora la richiesta WhatsApp al shop. File calendario e Google Calendar sono opzionali.",
-    },
     contact: {
       kicker: "Contatto",
-      title: "Passa al shop o chiama rapidamente.",
-      body: "Galaxy Barbershop si trova in Dübendorfstrasse 22, 8051 Zurigo. I walk-in sono sempre benvenuti durante gli orari di apertura.",
+      title: "Passa senza appuntamento. O scrivici al volo.",
+      body: "Dübendorfstrasse 22, 8051 Zurigo. Giovedì e venerdì fino alle 20:00, fattibile anche dopo il lavoro. Domenica chiuso.",
       labels: ["Telefono", "WhatsApp", "Indirizzo", "Orari"],
       whatsapp: "Scrivi direttamente",
-      hours: "Lun-sab 10:00-19:00 · Dom chiuso",
+      hours: [["Lun a mer", "9:00 alle 19:00"], ["Gio a ven", "9:00 alle 20:00"], ["Sabato", "9:00 alle 18:00"], ["Domenica", "chiuso"]],
       top: "Torna su",
     },
     footer: {
-      body: "Fades premium, contorni puliti e walk-in a Zurigo-Schwamendingen.",
+      body: "Taglio CHF 20 · Walk-in senza appuntamento · Zurigo-Schwamendingen",
       chapters: "Capitoli",
       visit: "Visita",
     },
     open: {
-      sunday: "Chiuso oggi · Lun-sab 10:00-19:00",
-      before: "Aperto oggi dalle 10:00",
-      active: "Aperto ora fino alle 19:00",
-      after: "Chiuso oggi · Domani dalle 10:00",
-    },
-    message: {
-      intro: "Ciao Galaxy Barbershop, vorrei richiedere un appuntamento via WhatsApp:",
-      name: "Nome",
-      phone: "Telefono",
-      email: "E-mail",
-      barber: "Barber",
-      service: "Servizio",
-      price: "Prezzo",
-      dateTime: "Data/ora",
-      duration: "Durata",
-      notes: "Richieste",
-      requestSubject: "Richiesta appuntamento",
+      sunday: "Chiuso oggi · Lun-mer 9-19 · Gio-ven 9-20 · Sab 9-18",
+      before: "Aperto oggi dalle 9:00",
+      active: "Aperto ora fino alle {close}",
+      after: "Chiuso per oggi · Domani dalle 9:00",
     },
     navToggleOpen: "Apri navigazione",
     navToggleClose: "Chiudi navigazione",
@@ -731,59 +453,48 @@ const translations = {
   },
   es: {
     code: "es",
-    title: "Galaxy Barbershop Zúrich | Fades, barba y cortes modernos",
+    title: "Galaxy Barbershop Zúrich | Corte CHF 20, sin cita",
     description:
-      "Galaxy Barbershop en Zúrich-Schwamendingen. Fades, cuidado de barba, cortes modernos para hombres y cortes para niños. Dübendorfstrasse 22, 8051 Zúrich.",
+      "Barbershop en Zúrich-Schwamendingen: corte CHF 20, barba CHF 15. Walk-ins sin cita. 4.8 estrellas de 119 reseñas de Google. Dübendorfstrasse 22.",
     skip: "Saltar al contenido",
     language: "Idioma",
-    nav: ["Servicios", "Location", "Equipo", "Galería", "Reseñas", "Cita", "Contacto"],
+    nav: ["Servicios", "Location", "Galería", "Reseñas", "Contacto"],
+    heroEyebrow: "Galaxy Barbershop · Zúrich-Schwamendingen",
+    heroTitle: "Corte CHF 20. Sin cita.",
     heroCopy:
-      "Fades frescos, líneas de barba limpias y walk-ins siempre en Zúrich-Schwamendingen. Khaled, Abdul y Said se aseguran de que salgas impecable.",
+      "En Zúrich un corte cuesta fácilmente CHF 50 o más. Con Khaled: fades limpios, contornos marcados y 4.8 estrellas de 119 reseñas de Google. A un precio fijo justo.",
     cta: {
-      whatsapp: "Reservar por WhatsApp",
+      whatsapp: "Escríbenos por WhatsApp",
       call: "Llamar",
-      booking: "Preparar cita",
       route: "Ruta",
       reviews: "Ver reseñas",
       maps: "Google Maps",
     },
-    proof: [
-      ["Walk-ins", "Siempre durante el horario"],
-      ["Valoración Google 4.8", "119 reseñas públicas"],
-      ["Dübendorfstrasse 22", "En Zúrich-Schwamendingen"],
-    ],
     conversion: {
-      priceLabel: "Todos los cortes",
-      price: "CHF 20",
-      walkLabel: "Walk-ins",
-      walk: "Siempre bienvenidos",
+      priceLabel: "Corte · en otros sitios CHF 40–80",
+      price: "solo CHF 20",
+      walkLabel: "Walk-in",
+      walk: "pasa sin cita",
       action: "WhatsApp ahora",
+      callLabel: "Llamar",
+      reviewsLabel: "119 reseñas Google",
     },
     intro: {
-      kicker: "Tu barber local en Zúrich",
-      title: "Un corte limpio habla antes de que digas una palabra.",
-      body: "Galaxy combina el oficio clásico de barbería con estilos modernos: transiciones limpias, contornos marcados, asesoramiento tranquilo y un resultado que sigue quedando bien después de unos días.",
+      kicker: "El shop",
+      title: "Khaled corta. Tú sales impecable.",
+      body: "Khaled corta desde hace años estilos masculinos clásicos y modernos: transiciones limpias, contornos marcados, asesoramiento honesto. Siempre el mismo barbero, siempre la misma calidad. Sabes exactamente lo que recibes.",
     },
     services: {
-      kicker: "Servicios",
-      title: "Para el día a día, ocasiones y un reinicio fresco.",
+      kicker: "Precios",
+      title: "Cuatro servicios. Precios fijos. Sin letra pequeña.",
       items: [
-        ["Haircut & Styling", "Cortes masculinos adaptados a tu estilo, con asesoría sobre largo, forma y acabado.", "desde 30 min.", "Haircut & Styling · CHF 20"],
-        ["Skin Fade & Taper", "Transiciones suaves, laterales limpios y trabajo preciso en los contornos.", "desde 45 min.", "Skin Fade & Taper · CHF 20"],
-        ["Barba & Contornos", "Recorte de barba, líneas con navaja y forma cuidada para un look definido.", "desde 30 min.", "Barba & Contornos · CHF 20"],
-        ["Kids & Teens", "Cortes con paciencia para niños y adolescentes, de clásico a moderno.", "desde 30 min.", "Kids & Teens · CHF 20"],
+        ["Corte & Styling", "Cortes masculinos adaptados a tu estilo, fades y tapers incluidos, con asesoría sobre largo, forma y acabado.", "desde 30 min.", "Corte & Styling · CHF 20"],
+        ["Barba & Contornos", "Recorte de barba, líneas con navaja y forma cuidada para un look definido.", "desde 20 min.", "Barba & Contornos · CHF 15"],
+        ["Corte & Barba", "El paquete completo: corte fresco y barba cuidada en una sola visita.", "desde 45 min.", "Corte & Barba · CHF 35"],
+        ["Niños hasta 12 años", "Cortes con paciencia para niños de hasta 12 años, de clásico a moderno.", "desde 30 min.", "Niños hasta 12 años · CHF 15"],
       ],
       choose: "Elegir servicio",
-      lead: "Todos los servicios cuestan CHF 20. Los walk-ins son bienvenidos durante el horario.",
-    },
-    team: {
-      kicker: "Equipo",
-      title: "Tres barbers, un estándar: salir impecable.",
-      bios: [
-        ["Khaled", "Asesoría tranquila, líneas precisas y experiencia con estilos masculinos clásicos y modernos.", ["Cortes clásicos", "Líneas limpias", "Asesoría"]],
-        ["Abdul", "Muy fuerte en fades, transiciones y cortes fáciles de llevar cada día.", ["Skin fades", "Taper", "Estilos modernos"]],
-        ["Said", "Contornos limpios, cuidado de barba y ojo para los detalles que completan el look.", ["Barba", "Contornos", "Detalles"]],
-      ],
+      lead: "Para comparar: un corte masculino en Zúrich suele costar de CHF 40 a 80. Aquí: CHF 20. Y no necesitas cita.",
     },
     proofCards: {
       kicker: "Detalles del corte",
@@ -798,16 +509,16 @@ const translations = {
     location: {
       kicker: "Location",
       title: "Madera oscura, cuero y luz cálida.",
-      body: "El shop se siente tranquilo y premium: paredes oscuras, asientos de cuero, espejos y estaciones limpias dan a cada corte el ambiente correcto.",
+      body: "Dübendorfstrasse 22, en pleno Schwamendingen. Sin florituras: un shop limpio y tranquilo con asientos de cuero y luz cálida. Una espera corta, y sales fresco.",
       tags: ["Asientos de cuero", "Luz cálida", "Estaciones barber limpias"],
       caption: "Dübendorfstrasse 22 · Zúrich-Schwamendingen",
       alt: "Sala barber oscura con lounge de cuero, luz cálida y suelo ajedrezado en Galaxy Barbershop Zúrich",
     },
-    gallery: { kicker: "Galería", title: "Trabajo real del shop.", expand: "Ampliar imagen" },
+    gallery: { kicker: "Galería", title: "Cortes frescos del shop.", lead: "Clientes reales, resultados reales. Toca una imagen para ampliarla.", expand: "Ampliar imagen" },
     reviews: {
       kicker: "Reseñas Google",
-      title: "Confianza antes del primer corte.",
-      body: "Voces públicas seleccionadas muestran rápido lo que valoran los clientes. Quien quiera leer más o dejar una reseña va directamente a la página oficial de Google.",
+      title: "4.8 estrellas. 119 reseñas. Todas públicas en Google.",
+      body: "Nada de esto está solo en nuestra web. Cada reseña se puede leer en Google. Mira tú mismo lo que dicen los clientes sobre fades, barba y tiempo de espera.",
       outOf: "de 5 estrellas",
       count: "119 reseñas Google",
       read: "Leer reseñas",
@@ -820,57 +531,25 @@ const translations = {
       readMore: "Leer más",
       showLess: "Mostrar menos",
     },
-    booking: {
-      kicker: "Cita",
-      title: "Reserva tu próximo corte.",
-      body: "Añade los detalles clave y envía la solicitud directamente por WhatsApp. Los archivos de calendario son solo un extra opcional después.",
-      ready: "Normalmente respondemos durante el horario de apertura.",
-      labels: ["Nombre", "E-mail", "Teléfono", "Barber", "Servicio", "Fecha", "Hora", "Duración", "Deseos"],
-      placeholders: ["Nombre Apellido", "nombre@email.com", "+41 ...", "Fade, barba, corte infantil, estilo preferido ..."],
-      chooseBarber: "Elegir barber",
-      chooseTime: "Elegir hora",
-      durations: ["30 minutos", "45 minutos", "60 minutos"],
-      actions: ["Preparar WhatsApp", "Enviar WhatsApp", "Archivo calendario", "Google Calendar"],
-      privacy: "Tus datos solo se usan en el archivo de calendario y en la solicitud preparada. Nada se envía automáticamente a servidores externos.",
-      errors: {
-        invalid: "Elige una fecha y hora válidas.",
-        sunday: "Elige una cita de lunes a sábado.",
-        hours: "Elige una hora en la que toda la cita quede entre las 10:00 y las 19:00.",
-      },
-      success: "Listo: envía ahora la solicitud de WhatsApp al shop. El archivo de calendario y Google Calendar son opcionales.",
-    },
     contact: {
       kicker: "Contacto",
-      title: "Pasa por el shop o llama rápido.",
-      body: "Galaxy Barbershop está en Dübendorfstrasse 22, 8051 Zúrich. Los walk-ins siempre son bienvenidos durante el horario de apertura.",
+      title: "Pasa sin cita. O escríbenos rápido.",
+      body: "Dübendorfstrasse 22, 8051 Zúrich. Jueves y viernes hasta las 20:00, también posible después del trabajo. Domingo cerrado.",
       labels: ["Teléfono", "WhatsApp", "Dirección", "Horario"],
       whatsapp: "Escribir directamente",
-      hours: "Lun-sáb 10:00-19:00 · Dom cerrado",
+      hours: [["Lun a mié", "9:00 a 19:00"], ["Jue a vie", "9:00 a 20:00"], ["Sábado", "9:00 a 18:00"], ["Domingo", "cerrado"]],
       top: "Volver arriba",
     },
     footer: {
-      body: "Fades premium, contornos limpios y walk-ins en Zúrich-Schwamendingen.",
+      body: "Corte CHF 20 · Walk-ins sin cita · Zúrich-Schwamendingen",
       chapters: "Capítulos",
       visit: "Visita",
     },
     open: {
-      sunday: "Cerrado hoy · Lun-sáb 10:00-19:00",
-      before: "Abierto hoy desde las 10:00",
-      active: "Abierto ahora hasta las 19:00",
-      after: "Cerrado hoy · Mañana desde las 10:00",
-    },
-    message: {
-      intro: "Hola Galaxy Barbershop, me gustaría solicitar una cita por WhatsApp:",
-      name: "Nombre",
-      phone: "Teléfono",
-      email: "E-mail",
-      barber: "Barber",
-      service: "Servicio",
-      price: "Precio",
-      dateTime: "Fecha/hora",
-      duration: "Duración",
-      notes: "Deseos",
-      requestSubject: "Solicitud de cita",
+      sunday: "Cerrado hoy · Lun-mié 9-19 · Jue-vie 9-20 · Sáb 9-18",
+      before: "Abierto hoy desde las 9:00",
+      active: "Abierto ahora hasta las {close}",
+      after: "Cerrado por hoy · Mañana desde las 9:00",
     },
     navToggleOpen: "Abrir navegación",
     navToggleClose: "Cerrar navegación",
@@ -934,24 +613,12 @@ const setPlaceholder = (selector, value) => {
 const setWhatsAppLinks = (text) => {
   const href = `https://wa.me/${shopPhone}?text=${encodeURIComponent(text)}`;
   document
-    .querySelectorAll(".hero-actions .button.primary, .conversion-strip .button.primary, .footer-cta, .mobile-action-bar a:first-child")
+    .querySelectorAll(".hero-actions .button.primary, .footer-cta, .mobile-action-bar a:first-child")
     .forEach((link) => {
     if (link instanceof HTMLAnchorElement) {
       link.href = href;
     }
   });
-};
-
-const getServiceLabel = (serviceValue) => {
-  const t = translations[currentLanguage] ?? translations[defaultLanguage];
-  const serviceMap = {
-    "Haircut & Styling": t.services.items[0][0],
-    "Skin Fade & Taper": t.services.items[1][0],
-    "Bart & Konturen": t.services.items[2][0],
-    "Kids & Teens": t.services.items[3][0],
-  };
-
-  return serviceMap[serviceValue] ?? serviceValue;
 };
 
 const applyLanguage = (language) => {
@@ -971,66 +638,38 @@ const applyLanguage = (language) => {
   setAttr(".language-control", "aria-label", t.language);
   setAttr("[data-nav-toggle]", "aria-label", navToggle?.getAttribute("aria-expanded") === "true" ? t.navToggleClose : t.navToggleOpen);
 
-  ["services", "location", "team", "gallery", "reviews", "booking", "contact"].forEach((id, index) => {
+  ["services", "location", "gallery", "reviews", "contact"].forEach((id, index) => {
     setText(`.site-nav a[href="#${id}"]`, t.nav[index]);
   });
 
+  setText(".hero .eyebrow", t.heroEyebrow);
+  setText(".hero h1", t.heroTitle);
   setText(".hero-copy", t.heroCopy);
   setText(".hero-actions .button.primary", t.cta.whatsapp);
   setText(".hero-actions .button.secondary", t.cta.call);
-  setText(".hero-actions .button.neon", t.cta.booking);
   setText(".hero-actions .button.ghost", t.cta.route);
-  setText(".hero-proof a", t.cta.reviews);
-  setText(".quickbar a:last-child", t.cta.maps);
+  setText(".hero-proof-cta", t.cta.reviews);
   setWhatsAppLinks(t.whatsappText);
 
-  t.proof.forEach(([title, copy], index) => {
-    const item = `.proof-strip > div:nth-child(${index + 1})`;
-    setText(`${item} strong`, title);
-    setText(`${item} span`, copy);
-  });
-
-  setText(".conversion-strip div:nth-child(1) span", t.conversion.priceLabel);
-  setText(".conversion-strip div:nth-child(1) strong", t.conversion.price);
-  setText(".conversion-strip div:nth-child(2) span", t.conversion.walkLabel);
-  setText(".conversion-strip div:nth-child(2) strong", t.conversion.walk);
-  setText(".conversion-strip .button", t.conversion.action);
-
-  setText(".intro .section-kicker", t.intro.kicker);
-  setText(".intro h2", t.intro.title);
-  setText(".intro p", t.intro.body);
+  setText(".info-strip > a:first-child span", t.conversion.callLabel);
+  setText(".info-strip > div:nth-child(2) span", t.conversion.priceLabel);
+  setText(".info-strip > div:nth-child(3) strong", t.conversion.walkLabel);
+  setText(".info-strip > div:nth-child(3) span", t.conversion.walk);
+  setText(".info-strip > a:last-child span", t.conversion.reviewsLabel);
 
   setText(".services .section-kicker", t.services.kicker);
   setText(".services h2", t.services.title);
   setText(".services .section-lead", t.services.lead);
-  t.services.items.forEach(([title, copy, duration, option], index) => {
+  t.services.items.forEach(([title, copy, duration], index) => {
     const card = `.service-card:nth-child(${index + 1})`;
     setText(`${card} h3`, title);
     setText(`${card} p`, copy);
     setText(`${card} .service-meta`, duration);
-    const optionElement = bookingForm?.elements?.service?.options?.[index + 1];
-    if (optionElement) {
-      optionElement.textContent = option;
-    }
-  });
-  const serviceSelect = bookingForm?.elements?.service;
-  if (serviceSelect instanceof HTMLSelectElement) {
-    serviceSelect.options[0].textContent = t.services.choose;
-  }
-
-  setText(".team .section-kicker", t.team.kicker);
-  setText(".team h2", t.team.title);
-  t.team.bios.forEach(([name, bio, tags], index) => {
-    const card = `.team-grid article:nth-child(${index + 1})`;
-    setText(`${card} h3`, name);
-    setText(`${card} p`, bio);
-    document.querySelectorAll(`${card} .team-tags span`).forEach((tag, tagIndex) => {
-      tag.textContent = tags[tagIndex] ?? "";
-    });
   });
 
-  setText(".cut-proof .section-kicker", t.proofCards.kicker);
-  setText(".cut-proof h2", t.proofCards.title);
+  setText(".gallery-section .section-kicker", t.gallery.kicker);
+  setText(".gallery-section h2", t.gallery.title);
+  setText(".gallery-section .section-lead", t.gallery.lead);
   setAttr(".proof-card:first-child img", "alt", t.proofCards.clearAlt);
   t.proofCards.items.forEach(([title, copy], index) => {
     const card = `.proof-card:nth-child(${index + 1})`;
@@ -1038,17 +677,16 @@ const applyLanguage = (language) => {
     setText(`${card} p`, copy);
   });
 
-  setText(".location-section .section-kicker", t.location.kicker);
-  setText(".location-section h2", t.location.title);
-  setText(".location-section p", t.location.body);
+  setText(".location-section .section-kicker", t.intro.kicker);
+  setText(".location-section h2", t.intro.title);
+  setText(".location-intro-text", t.intro.body);
+  setText(".location-body-text", t.location.body);
   document.querySelectorAll(".location-details span").forEach((tag, index) => {
     tag.textContent = t.location.tags[index] ?? tag.textContent;
   });
   setText(".location-media figcaption", t.location.caption);
   setAttr(".location-media img", "alt", t.location.alt);
 
-  setText(".gallery-section .section-kicker", t.gallery.kicker);
-  setText(".gallery-section h2", t.gallery.title);
   setAttr(".gallery button", "aria-label", t.gallery.expand);
 
   setText(".reviews-copy .section-kicker", t.reviews.kicker);
@@ -1081,52 +719,6 @@ const applyLanguage = (language) => {
     button.textContent = card?.classList.contains("is-expanded") ? t.reviews.showLess : t.reviews.readMore;
   });
 
-  setText(".booking-copy .section-kicker", t.booking.kicker);
-  setText(".booking h2", t.booking.title);
-  setText(".booking-copy > p", t.booking.body);
-  if (bookingStatus && !bookingStatus.dataset.generated) {
-    bookingStatus.textContent = t.booking.ready;
-  }
-
-  const optionalLabel = {
-    de: "optional",
-    en: "optional",
-    fr: "optionnel",
-    it: "opzionale",
-    es: "opcional",
-  }[t.code] ?? "optional";
-
-  document.querySelectorAll(".booking-form label").forEach((label, index) => {
-    const control = label.querySelector("input, select, textarea");
-    if (!control) {
-      return;
-    }
-    const labelText = index === 1 ? `${t.booking.labels[index]} ${optionalLabel}` : t.booking.labels[index];
-    label.childNodes[0].textContent = `${labelText} `;
-  });
-  setPlaceholder('input[name="name"]', t.booking.placeholders[0]);
-  setPlaceholder('input[name="email"]', t.booking.placeholders[1]);
-  setPlaceholder('input[name="phone"]', t.booking.placeholders[2]);
-  setPlaceholder('textarea[name="notes"]', t.booking.placeholders[3]);
-  const barberSelect = bookingForm?.elements?.barber;
-  if (barberSelect instanceof HTMLSelectElement) {
-    barberSelect.options[0].textContent = t.booking.chooseBarber;
-  }
-  const timeSelect = bookingForm?.elements?.time;
-  if (timeSelect instanceof HTMLSelectElement && timeSelect.options[0]) {
-    timeSelect.options[0].textContent = t.booking.chooseTime;
-  }
-  const durationSelect = bookingForm?.elements?.duration;
-  if (durationSelect instanceof HTMLSelectElement) {
-    Array.from(durationSelect.options).forEach((option, index) => {
-      option.textContent = t.booking.durations[index] ?? option.textContent;
-    });
-  }
-  document.querySelectorAll(".form-actions > *").forEach((action, index) => {
-    action.textContent = t.booking.actions[index] ?? action.textContent;
-  });
-  setText(".privacy-note", t.booking.privacy);
-
   setText(".contact .section-kicker", t.contact.kicker);
   setText(".contact h2", t.contact.title);
   setText(".contact p", t.contact.body);
@@ -1134,7 +726,16 @@ const applyLanguage = (language) => {
     label.textContent = t.contact.labels[index] ?? label.textContent;
   });
   setText('.contact-list a[href^="https://wa.me"] strong', t.contact.whatsapp);
-  setText(".contact-list > div strong", t.contact.hours);
+  document.querySelectorAll("[data-hours-list] > div").forEach((row, index) => {
+    const entry = t.contact.hours[index];
+    if (!entry) {
+      return;
+    }
+    const dt = row.querySelector("dt");
+    const dd = row.querySelector("dd");
+    if (dt) dt.textContent = entry[0];
+    if (dd) dd.textContent = entry[1];
+  });
   setText(".footer-brand p", t.footer.body);
   setText(".footer-cta", t.conversion.action);
   setText(".footer-chapters h2", t.footer.chapters);
@@ -1142,13 +743,11 @@ const applyLanguage = (language) => {
   setText(".footer-visit h2", t.footer.visit);
   [
     ["services", t.nav[0]],
-    ["location", t.nav[1]],
-    ["team", t.nav[2]],
     ["proof", t.proofCards.kicker],
-    ["gallery", t.nav[3]],
-    ["reviews", t.nav[4]],
-    ["booking", t.nav[5]],
-    ["contact", t.nav[6]],
+    ["gallery", t.nav[2]],
+    ["reviews", t.nav[3]],
+    ["location", t.nav[1]],
+    ["contact", t.nav[4]],
   ].forEach(([id, label]) => {
     setText(`.footer-chapters a[href="#${id}"]`, label);
   });
@@ -1453,7 +1052,7 @@ const scrollToSection = (target, options = {}) => {
   revealSection(target);
 
   const scrollAnchor = target.matches(".section")
-    ? (target.querySelector(".section-heading, .intro-grid, .location-copy, .reviews-copy, .booking-copy, .contact > :first-child") ?? target)
+    ? (target.querySelector(".section-heading, .location-copy, .reviews-copy, .contact > :first-child") ?? target)
     : target;
   const headerOffset = (header?.offsetHeight ?? 0) + 16;
   const targetTop = scrollAnchor.getBoundingClientRect().top + window.scrollY - headerOffset;
@@ -1765,110 +1364,6 @@ if (reviewCarousel && reviewTrack && reviewDots && reviewHighlights.length > 0) 
   startAutoAdvance();
 }
 
-const pad = (value) => String(value).padStart(2, "0");
-
-const toUtcCalendarStamp = (date) =>
-  `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}T${pad(date.getUTCHours())}${pad(
-    date.getUTCMinutes(),
-  )}00Z`;
-
-const toLocalCalendarStamp = (date) =>
-  `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(
-    date.getMinutes(),
-  )}00`;
-
-const escapeCalendarText = (value) =>
-  String(value ?? "")
-    .replace(/\\/g, "\\\\")
-    .replace(/\n/g, "\\n")
-    .replace(/,/g, "\\,")
-    .replace(/;/g, "\\;");
-
-const foldCalendarLine = (line) => {
-  const chunks = [];
-  let current = line;
-
-  while (current.length > 74) {
-    chunks.push(current.slice(0, 74));
-    current = ` ${current.slice(74)}`;
-  }
-
-  chunks.push(current);
-  return chunks.join("\r\n");
-};
-
-const buildCalendarFile = (booking) => {
-  const attendeeLines = [
-    `ATTENDEE;CN=${escapeCalendarText(booking.name)};RSVP=TRUE:mailto:${booking.email}`,
-  ];
-
-  if (booking.barberEmail) {
-    attendeeLines.push(
-      `ATTENDEE;CN=${escapeCalendarText(booking.barber)};ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:${booking.barberEmail}`,
-    );
-  }
-
-  const lines = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//Galaxy Barbershop Zurich//Booking//DE",
-    "CALSCALE:GREGORIAN",
-    "METHOD:REQUEST",
-    "BEGIN:VEVENT",
-    `UID:galaxy-${Date.now()}@galaxy-barbershop.local`,
-    `DTSTAMP:${toUtcCalendarStamp(new Date())}`,
-    `DTSTART;TZID=Europe/Zurich:${toLocalCalendarStamp(booking.start)}`,
-    `DTEND;TZID=Europe/Zurich:${toLocalCalendarStamp(booking.end)}`,
-    `SUMMARY:${escapeCalendarText(`${booking.service} mit ${booking.barber}`)}`,
-    `LOCATION:${escapeCalendarText("Galaxy Barbershop, Dübendorfstrasse 22, 8051 Zürich")}`,
-    `DESCRIPTION:${escapeCalendarText(booking.description)}`,
-    shopEmail ? `ORGANIZER;CN=Galaxy Barbershop:mailto:${shopEmail}` : "",
-    ...attendeeLines,
-    "END:VEVENT",
-    "END:VCALENDAR",
-  ].filter(Boolean);
-
-  return lines.map(foldCalendarLine).join("\r\n");
-};
-
-const buildGoogleCalendarUrl = (booking) => {
-  const params = new URLSearchParams({
-    action: "TEMPLATE",
-    text: `${booking.service} mit ${booking.barber}`,
-    dates: `${toUtcCalendarStamp(booking.start)}/${toUtcCalendarStamp(booking.end)}`,
-    details: booking.description,
-    location: "Galaxy Barbershop, Dübendorfstrasse 22, 8051 Zürich",
-  });
-
-  if (booking.email) {
-    params.set("add", booking.email);
-  }
-
-  return `https://calendar.google.com/calendar/render?${params.toString()}`;
-};
-
-const activateLink = (link, href) => {
-  if (!link) {
-    return;
-  }
-
-  link.href = href;
-  link.classList.remove("is-disabled");
-  link.removeAttribute("aria-disabled");
-  link.removeAttribute("tabindex");
-};
-
-const deactivateLink = (link) => {
-  if (!link) {
-    return;
-  }
-
-  link.href = "#";
-  link.classList.add("is-disabled");
-  link.setAttribute("aria-disabled", "true");
-  link.setAttribute("tabindex", "-1");
-};
-
 const getOpeningWindow = (date) => {
   const open = new Date(date);
   open.setHours(10, 0, 0, 0);
@@ -1888,8 +1383,9 @@ const setOpenStatus = () => {
   const now = new Date();
   const day = now.getDay();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
-  const openingMinutes = 10 * 60;
-  const closingMinutes = 19 * 60;
+  const openingMinutes = 9 * 60;
+  const closingHour = day === 4 || day === 5 ? 20 : day === 6 ? 18 : 19;
+  const closingMinutes = closingHour * 60;
 
   if (day === 0) {
     openStatus.textContent = t.open.sunday;
@@ -1902,198 +1398,22 @@ const setOpenStatus = () => {
   }
 
   if (currentMinutes < closingMinutes) {
-    openStatus.textContent = t.open.active;
+    openStatus.textContent = t.open.active.replace("{close}", `${closingHour}:00`);
     return;
   }
 
   openStatus.textContent = t.open.after;
 };
 
-const setMinBookingDate = () => {
-  const dateInput = bookingForm?.elements?.date;
+window.setInterval(setOpenStatus, 60_000);
 
-  if (dateInput instanceof HTMLInputElement) {
-    const today = new Date();
-    dateInput.min = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
-  }
-};
-
-const getBookingTimeSlots = (duration) => {
-  const slots = [];
-  const openingMinutes = 10 * 60;
-  const closingMinutes = 19 * 60;
-  const latestStartMinutes = closingMinutes - duration;
-
-  for (let minutes = openingMinutes; minutes <= latestStartMinutes; minutes += 30) {
-    slots.push(`${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`);
-  }
-
-  return slots;
-};
-
-const populateBookingTimes = () => {
-  const timeInput = bookingForm?.elements?.time;
-  const durationInput = bookingForm?.elements?.duration;
-
-  if (!(timeInput instanceof HTMLSelectElement) || !(durationInput instanceof HTMLSelectElement)) {
-    return;
-  }
-
-  const t = translations[currentLanguage] ?? translations[defaultLanguage];
-  const previousValue = timeInput.value;
-  const duration = Number(durationInput.value) || 30;
-  const slots = getBookingTimeSlots(duration);
-
-  timeInput.replaceChildren();
-
-  const placeholder = document.createElement("option");
-  placeholder.value = "";
-  placeholder.textContent = t.booking.chooseTime;
-  placeholder.disabled = true;
-  timeInput.append(placeholder);
-
-  slots.forEach((slot) => {
-    const option = document.createElement("option");
-    option.value = slot;
-    option.textContent = slot;
-    timeInput.append(option);
-  });
-
-  timeInput.value = slots.includes(previousValue) ? previousValue : "";
-};
-
-setMinBookingDate();
-populateBookingTimes();
 applyLanguage(currentLanguage);
-bookingForm?.elements?.duration?.addEventListener("change", populateBookingTimes);
 languageSelect?.addEventListener("change", (event) => {
   if (!(event.target instanceof HTMLSelectElement)) {
     return;
   }
 
-  bookingStatus?.removeAttribute("data-generated");
   storeLanguage(event.target.value);
   applyLanguage(event.target.value);
 });
 
-let calendarObjectUrl;
-
-bookingForm?.addEventListener("submit", (event) => {
-  event.preventDefault();
-  deactivateLink(calendarDownload);
-  deactivateLink(googleCalendarLink);
-  deactivateLink(mailRequest);
-
-  const t = translations[currentLanguage] ?? translations[defaultLanguage];
-  const form = event.currentTarget;
-  const submitter = form.querySelector('button[type="submit"]');
-  const formData = new FormData(form);
-  const date = String(formData.get("date"));
-  const time = String(formData.get("time"));
-  const start = new Date(`${date}T${time}`);
-  const duration = Number(formData.get("duration"));
-  const end = new Date(start.getTime() + duration * 60 * 1000);
-  const day = start.getDay();
-  const barber = String(formData.get("barber"));
-  const service = String(formData.get("service"));
-  const serviceLabel = getServiceLabel(service);
-  const name = String(formData.get("name")).trim();
-  const email = String(formData.get("email")).trim();
-  const phone = String(formData.get("phone")).trim();
-  const notes = String(formData.get("notes") ?? "").trim();
-  const barberEmail = barberEmails[barber] ?? "";
-
-  if (Number.isNaN(start.getTime())) {
-    if (bookingStatus) {
-      bookingStatus.textContent = t.booking.errors.invalid;
-      bookingStatus.dataset.generated = "true";
-    }
-    return;
-  }
-
-  if (day === 0) {
-    if (bookingStatus) {
-      bookingStatus.textContent = t.booking.errors.sunday;
-      bookingStatus.dataset.generated = "true";
-    }
-    return;
-  }
-
-  const { open, close } = getOpeningWindow(start);
-
-  if (start < open || end > close) {
-    if (bookingStatus) {
-      bookingStatus.textContent = t.booking.errors.hours;
-      bookingStatus.dataset.generated = "true";
-    }
-    return;
-  }
-
-  const description = [
-    `${t.message.name}: ${name}`,
-    `${t.message.phone}: ${phone}`,
-    email ? `${t.message.email}: ${email}` : "",
-    `${t.message.barber}: ${barber}`,
-    `${t.message.service}: ${serviceLabel}`,
-    `${t.message.price}: ${servicePrice}`,
-    notes ? `${t.message.notes}: ${notes}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  const booking = {
-    name,
-    email,
-    phone,
-    barber,
-    barberEmail,
-    service: serviceLabel,
-    start,
-    end,
-    description,
-  };
-
-  const calendarBlob = new Blob([buildCalendarFile(booking)], { type: "text/calendar;charset=utf-8" });
-  if (calendarObjectUrl) {
-    URL.revokeObjectURL(calendarObjectUrl);
-  }
-  const calendarUrl = URL.createObjectURL(calendarBlob);
-  calendarObjectUrl = calendarUrl;
-  const fileName = `galaxy-barbershop-${date}-${time.replace(":", "")}.ics`;
-  const plainMessage = [
-    t.message.intro,
-    "",
-    `${t.message.name}: ${name}`,
-    `${t.message.phone}: ${phone}`,
-    email ? `${t.message.email}: ${email}` : "",
-    `${t.message.barber}: ${barber}`,
-    `${t.message.service}: ${serviceLabel}`,
-    `${t.message.price}: ${servicePrice}`,
-    `${t.message.dateTime}: ${date} ${time}`,
-    `${t.message.duration}: ${duration} ${duration === 1 ? "Minute" : t.booking.durations[0].replace("30 ", "")}`,
-    notes ? `${t.message.notes}: ${notes}` : "",
-  ]
-    .filter((line) => line !== "")
-    .join("\n");
-  const message = encodeURIComponent(plainMessage);
-  const mailHref = shopEmail
-    ? `mailto:${shopEmail}?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(
-        `${t.message.requestSubject}: ${serviceLabel} - ${barber}`,
-      )}&body=${message}`
-    : `https://wa.me/${shopPhone}?text=${message}`;
-
-  if (calendarDownload) {
-    calendarDownload.setAttribute("download", fileName);
-    activateLink(calendarDownload, calendarUrl);
-  }
-
-  activateLink(googleCalendarLink, buildGoogleCalendarUrl(booking));
-  activateLink(mailRequest, mailHref);
-
-  if (bookingStatus) {
-    bookingStatus.textContent = t.booking.success;
-    bookingStatus.dataset.generated = "true";
-  }
-
-  submitter?.focus();
-});
