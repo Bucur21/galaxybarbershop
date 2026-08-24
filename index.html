@@ -9,13 +9,18 @@
       content="Barbershop in Zürich-Schwamendingen: Haarschnitt CHF 20, Bart CHF 15. Walk-ins ohne Termin. 4.8 Sterne aus 119 Google-Reviews. Dübendorfstrasse 22."
     />
     <meta name="theme-color" content="#0f0e0c" />
+    <link rel="canonical" href="https://www.galaxybarber.ch/" />
+    <meta property="og:url" content="https://www.galaxybarber.ch/" />
+    <meta property="og:site_name" content="Galaxy Barbershop" />
+    <meta property="og:locale" content="de_CH" />
     <meta property="og:title" content="Galaxy Barbershop Zürich" />
     <meta
       property="og:description"
       content="Haarschnitt CHF 20, ohne Termin. 4.8 Sterne aus 119 Google-Reviews. Dübendorfstrasse 22, Zürich-Schwamendingen."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="assets/hero.webp" />
+    <meta property="og:image" content="https://www.galaxybarber.ch/assets/hero.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="assets/hero.webp" as="image" />
     <script>
@@ -39,9 +44,24 @@
       {
         "@context": "https://schema.org",
         "@type": "HairSalon",
+        "@id": "https://www.galaxybarber.ch/#business",
         "name": "Galaxy Barbershop",
-        "image": "assets/hero.webp",
-        "logo": "assets/galaxy-logo-lockup.svg",
+        "url": "https://www.galaxybarber.ch/",
+        "image": "https://www.galaxybarber.ch/assets/hero.webp",
+        "logo": "https://www.galaxybarber.ch/assets/galaxy-logo-lockup.svg",
+        "description": "Barbershop in Zürich-Schwamendingen. Haarschnitt CHF 20, Bart CHF 15. Walk-ins ohne Termin.",
+        "currenciesAccepted": "CHF",
+        "areaServed": [
+          { "@type": "City", "name": "Zürich" },
+          { "@type": "Place", "name": "Schwamendingen" },
+          { "@type": "Place", "name": "Oerlikon" },
+          { "@type": "Place", "name": "Dübendorf" }
+        ],
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 47.4032258,
+          "longitude": 8.5756556
+        },
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Dübendorfstrasse 22",
@@ -95,6 +115,12 @@
             "dayOfWeek": ["Saturday"],
             "opens": "09:00",
             "closes": "18:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Sunday"],
+            "opens": "00:00",
+            "closes": "00:00"
           }
         ],
         "aggregateRating": {
