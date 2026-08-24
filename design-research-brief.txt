@@ -1,0 +1,51 @@
+DISTILLED DESIGN BRIEF — barbershop redesign (dark, masculine, premium, booking-focused)
+Sources: [T] = Leonxlnx/taste-skill (skills/taste-skill/SKILL.md), [R] = Leonxlnx/taste-skill (skills/redesign-skill/SKILL.md), [U] = nextlevelbuilder/ui-ux-pro-max-skill (SKILL.md + README)
+
+PROCESS / REDESIGN PROTOCOL
+1. Redesign sequence: Scan (framework, styling method, current patterns) -> Diagnose (audit for generic/AI patterns, missing states) -> Fix targeted upgrades within the existing stack; never rewrite from scratch. [R "How This Works"]
+2. Audit before touching: document brand tokens (colors, type, logo, radii), IA + conversion paths, patterns to preserve vs retire, and infer the site's current VARIANCE/MOTION/DENSITY dials as your starting point. SEO migration is the #1 redesign risk — keep slugs, anchor IDs, nav labels stable. [T §11]
+3. Never silently change: URL structure, primary nav labels, form field names/order, logo, legal copy. [T §11.F]
+4. Fix-priority order (max impact, min risk): 1 font swap, 2 color cleanup, 3 hover/active states, 4 layout & spacing, 5 replace generic components, 6 loading/empty/error states, 7 typography polish. [R "Fix Priority"]
+5. Declare a one-line "Design Read" before coding, e.g. "Reading this as: local-business landing for walk-in + booking customers, with a dark premium masculine language, leaning toward vanilla CSS + restrained motion." [T §0.B]
+
+THE THREE DIALS
+6. Set DESIGN_VARIANCE / MOTION_INTENSITY / VISUAL_DENSITY (each 1-10). Premium-consumer preset: 7/6/3. Redesign-overhaul: existing variance +2, motion +2, density unchanged. Dials gate every layout/motion decision. [T §1]
+7. Dial semantics: variance 4-7 = offset overlaps, mixed aspect ratios, left-aligned headers; motion 4-7 = fluid CSS transitions (transform/opacity, cubic-bezier(0.16,1,0.3,1)); density 1-3 = airy py-32-py-48 section gaps. Asymmetric layouts MUST collapse to single column <768px. [T §7]
+8. UUPM equivalent dials: variance high biases bold/asymmetric/bento; density low = spacious 24-96px spacing scale for marketing pages. [U "Design Dials"]
+
+COLOR & SURFACES (dark theme)
+9. No pure #000000 backgrounds — use off-black/charcoal (#0a0a0a, #121212) or tinted dark; no pure #ffffff text either. Pure values kill depth. [R "Color"; T §8.B]
+10. ONE accent color, saturation <80%, locked across the whole page (nav, hero, CTA, footer identical accent). One gray family (warm OR cool, never mixed). [R; T §4.2 Color Consistency Lock]
+11. Ban the AI-purple/blue gradient aesthetic and neon outer glows; also ban the default premium beige+brass+espresso family. For premium-masculine, rotate to families like "Black and Tan" (true off-black + warm tan, sharp contrast, no beige), Cold Luxury (silver/chrome/smoke), or monochrome + one saturated pop. Gold CTA is UUPM's premium-service move (Serenity Spa example: gold #D4AF37 CTA on calm base). [T §4.2, §9.A; R; U README]
+12. Tint shadows to the background hue (never pure black at low opacity); keep one consistent light direction; add subtle grain/noise overlay (fixed, pointer-events-none) to break flat sterility. [R "Color and Surfaces", "Surface Upgrades"; T §6.E]
+13. Page Theme Lock: dark page = ALL sections dark. Section tints within family are fine (#0a0a0a next to #121212); no light section sandwiched mid-scroll. [T §4.11]
+14. Empty flat sections are unfinished: put photography behind hero/CTA blocks (blurred, masked, or low-opacity full-width) — ideal for a photo-heavy barbershop. [R "Color and Surfaces"]
+
+TYPOGRAPHY
+15. Replace default/Inter fonts with a characterful sans display (Geist, Outfit, Cabinet Grotesk, Satoshi, GT Walsheim, PP Neue Montreal). Serif only with explicit brand justification; Fraunces and Instrument Serif banned as defaults. [R "Typography"; T §4.1]
+16. Headlines: big, tight negative tracking, leading-none, heavy and intentional; control hierarchy with weight+color, not just raw size. Body: ~65ch max width, relaxed line-height, base 16px, add 500/600 weights between 400 and 700. [R; T §4.1; U priority 6]
+17. Labels/eyebrows: positive tracking on small caps, but MAX 1 eyebrow per 3 sections (hero counts). Don't put an uppercase micro-label above every heading. Prices/numbers: tabular-nums or mono. Fix orphans with text-wrap: balance. [T §4.7 Eyebrow Restraint; R]
+18. ZERO em-dashes (—) or en-dashes anywhere visible; hyphens only. Non-negotiable pre-flight fail. [T §9.G]
+
+LAYOUT
+19. Anti-center bias: at variance>4, avoid centered-hero-over-dark-mesh; use split hero (text left / photo right), asymmetric whitespace, offset margins, mixed aspect ratios. Ban the "three equal feature cards" row — use 2-col zigzag, asymmetric grid, or masonry (good for a barber gallery). [T §4.3, §9.C; R "Layout"]
+20. Hero discipline: fits initial viewport, headline ≤2 lines, subtext ≤20 words, CTA visible without scroll, max 4 text elements total, top padding ≤6rem, real photo (not text+gradient). min-height:100dvh, never 100vh/h-screen. [T §4.7; R]
+21. Section-layout variety: a layout family appears at most once; max 2 consecutive image/text zigzag splits; then break with full-width photo, stat band, or grid. Marquee max once per page. No split-header (big left headline + small right paragraph) as default. [T §4.7, §5]
+22. Container max-width ~1200-1400px; CSS Grid over flexbox %-math; asymmetric vertical padding tuned optically; nav one line, ≤80px tall, active page indicated. [R; T §3.E, §4.7]
+23. UUPM local-service landing pattern: Hero-Centric + Social Proof; sections Hero -> Services -> Testimonials -> Booking -> Contact; CTA above the fold and repeated after testimonials; conversion is emotion-driven with trust elements. [U README design-system example]
+
+INTERACTION, MOTION, STATES
+24. Every interactive element: hover shift, :active scale(0.98)/translateY(1px), 200-300ms transitions, visible focus ring. Animate only transform/opacity; ban window scroll listeners — use IntersectionObserver or CSS scroll-driven animations; honor prefers-reduced-motion for anything beyond hovers. [R "Interactivity"; T §5.D, §6.B]
+25. Motion must be motivated (hierarchy/story/feedback/state) — one sentence justification or drop it. Staggered scroll-reveals (opacity + y-24, ~0.6s, 60ms stagger, once:true) for services/testimonial/gallery grids. [T §5, §5.C]
+26. Touch/accessibility floors: 44×44px targets, 8px spacing, WCAG AA 4.5:1 contrast (check every CTA and form field against its background — no ghost buttons over photos without scrim), alt text, keyboard nav, no hover-only reveals. [U priorities 1-2; T §4.5]
+27. CTA rules: text fits one line; ONE label per intent — pick a single "Book now" wording and reuse it verbatim in nav, hero, and footer (no "Book now" + "Reserve" + "Schedule a visit"). [T §4.5]
+28. Ship full state cycles: skeleton loaders shaped like the layout (no generic spinners), composed empty states, inline form errors below fields, labels above inputs (never placeholder-as-label), client-side validation on the booking form. [T §4.5-4.6; R; U priority 8]
+
+CONTENT & ANTI-SLOP COPY
+29. Ban AI-tell copy: "Elevate/Seamless/Unleash/Next-Gen", "Oops!", exclamation marks in confirmations, Lorem Ipsum, Title Case Headers, fake-round numbers (use organic ones: real prices like $32, real phone formats), generic "John Doe" testimonial names, identical avatars. Sentence case, plain specific language, active voice. [R "Content"; T §9.D]
+30. Ban decor tells: version labels, section-numbering eyebrows (01/INDEX), scroll cues ("Scroll to explore"), decorative status dots, pills/tags overlaid on photos, fake photo-credit captions, rationed middle-dots (·), locale/time/weather strips, quotes ≤3 lines with name+role attribution. [T §9.F, §4.10]
+31. Images: real photography everywhere (the shop's own photos first; picsum seed placeholders only as stopgap with a TODO list of needed shots); WebP/AVIF, lazy-load below fold, reserve dimensions (CLS<0.1), LCP<2.5s for hero image; no emoji as icons, one icon family (Phosphor/Heroicons — not Lucide/Feather default) at one stroke width. [T §4.8, §6.D; R "Iconography"; U priorities 3-4]
+32. Strategic omissions to add: branded favicon, custom 404, meta/OG tags, privacy/terms footer links, skip-to-content link, semantic HTML (nav/main/section), no dead "#" links. [R "Code Quality", "Strategic Omissions"]
+
+PRE-FLIGHT (final filter — any fail = not done)
+33. Before ship, mechanically verify: theme lock, single accent, single radius system, hero viewport fit, eyebrow count ≤ ceil(sections/3), no 3+ zigzags, no duplicate CTA intent, every CTA/form passes AA contrast, zero em-dashes, real images, quotes ≤3 lines, copy self-audit for broken/AI-cute strings, reduced-motion fallbacks, mobile collapse explicit, both-mode/dark contrast check. [T §14; U pro-rules pre-delivery checklist]

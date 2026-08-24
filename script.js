@@ -770,7 +770,7 @@ const applyLanguage = (language) => {
 
 currentLanguage = getInitialLanguage();
 
-// Google reviews extracted from google-review-screenshot-extract.md.
+// Google reviews extracted from assets/source-photos/google-review-screenshot-extract.md.
 const reviewHighlights = [
   {
     author: "Andrei Borcoman",
