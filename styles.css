@@ -869,6 +869,34 @@ a.info-strip-cell:hover strong,
   width: min(1240px, calc(100% - 36px));
 }
 
+.gallery-more-heading {
+  margin-top: 46px;
+}
+
+.gallery-more-kicker {
+  margin: 0 0 12px;
+  color: var(--gold);
+  font-family: var(--font-ui);
+  font-size: clamp(0.94rem, 0.8vw, 1.04rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gallery-more-heading h3 {
+  margin: 0;
+  font-size: clamp(1.7rem, 2.6vw, 2.35rem);
+  line-height: 1.06;
+}
+
+.gallery-more-lead {
+  max-width: 620px;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1.65;
+}
+
 .gallery {
   display: grid;
   grid-template-columns: repeat(6, 1fr);

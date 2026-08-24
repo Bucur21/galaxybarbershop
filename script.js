@@ -98,6 +98,9 @@ const translations = {
       title: "Frische Cuts aus dem Shop.",
       lead: "Echte Kunden, echte Ergebnisse. Tippe auf ein Bild für die Grossansicht.",
       expand: "Bild vergrößern",
+      moreKicker: "Mehr Bilder",
+      moreTitle: "Weitere Cuts aus dem Shop.",
+      moreLead: "Noch mehr Arbeiten von Khaled – tippe für die Grossansicht.",
     },
     reviews: {
       kicker: "Google Reviews",
@@ -137,7 +140,7 @@ const translations = {
     },
     navToggleOpen: "Navigation öffnen",
     navToggleClose: "Navigation schließen",
-    whatsappText: "Hallo Galaxy Barbershop, ich möchte einen Termin anfragen.",
+    whatsappText: "Hallo Galaxy Barbershop, wann könnte ich vorbeikommen?",
   },
   en: {
     code: "en",
@@ -202,7 +205,7 @@ const translations = {
       caption: "Dübendorfstrasse 22 · Zurich-Schwamendingen",
       alt: "Dark barber room with leather lounge, warm lighting and checkerboard floor inside Galaxy Barbershop Zurich",
     },
-    gallery: { kicker: "Gallery", title: "Fresh cuts from the shop.", lead: "Real customers, real results. Tap an image for the full view.", expand: "Enlarge image" },
+    gallery: { kicker: "Gallery", title: "Fresh cuts from the shop.", lead: "Real customers, real results. Tap an image for the full view.", expand: "Enlarge image", moreKicker: "More photos", moreTitle: "More cuts from the shop.", moreLead: "More of Khaled's work – tap for the full view." },
     reviews: {
       kicker: "Google Reviews",
       title: "4.8 stars. 119 reviews. All public on Google.",
@@ -241,7 +244,7 @@ const translations = {
     },
     navToggleOpen: "Open navigation",
     navToggleClose: "Close navigation",
-    whatsappText: "Hello Galaxy Barbershop, I would like to request an appointment.",
+    whatsappText: "Hello Galaxy Barbershop, when could I come by?",
   },
   fr: {
     code: "fr",
@@ -306,7 +309,7 @@ const translations = {
       caption: "Dübendorfstrasse 22 · Zurich-Schwamendingen",
       alt: "Salle de barber sombre avec lounge en cuir, lumière chaude et sol damier chez Galaxy Barbershop Zurich",
     },
-    gallery: { kicker: "Galerie", title: "Des coupes fraîches du shop.", lead: "De vrais clients, de vrais résultats. Touche une image pour l'agrandir.", expand: "Agrandir l'image" },
+    gallery: { kicker: "Galerie", title: "Des coupes fraîches du shop.", lead: "De vrais clients, de vrais résultats. Touche une image pour l'agrandir.", expand: "Agrandir l'image", moreKicker: "Plus de photos", moreTitle: "D'autres coupes du shop.", moreLead: "Encore plus de travaux de Khaled – touche pour agrandir." },
     reviews: {
       kicker: "Avis Google",
       title: "4.8 étoiles. 119 avis. Tous publics sur Google.",
@@ -345,7 +348,7 @@ const translations = {
     },
     navToggleOpen: "Ouvrir la navigation",
     navToggleClose: "Fermer la navigation",
-    whatsappText: "Bonjour Galaxy Barbershop, je souhaite demander un rendez-vous.",
+    whatsappText: "Bonjour Galaxy Barbershop, quand est-ce que je peux passer ?",
   },
   it: {
     code: "it",
@@ -410,7 +413,7 @@ const translations = {
       caption: "Dübendorfstrasse 22 · Zurigo-Schwamendingen",
       alt: "Sala barber scura con lounge in pelle, luce calda e pavimento a scacchi nel Galaxy Barbershop Zurigo",
     },
-    gallery: { kicker: "Galleria", title: "Tagli freschi dal shop.", lead: "Clienti veri, risultati veri. Tocca un'immagine per ingrandirla.", expand: "Ingrandisci immagine" },
+    gallery: { kicker: "Galleria", title: "Tagli freschi dal shop.", lead: "Clienti veri, risultati veri. Tocca un'immagine per ingrandirla.", expand: "Ingrandisci immagine", moreKicker: "Altre foto", moreTitle: "Altri tagli dal shop.", moreLead: "Ancora più lavori di Khaled – tocca per ingrandire." },
     reviews: {
       kicker: "Recensioni Google",
       title: "4.8 stelle. 119 recensioni. Tutte pubbliche su Google.",
@@ -449,7 +452,7 @@ const translations = {
     },
     navToggleOpen: "Apri navigazione",
     navToggleClose: "Chiudi navigazione",
-    whatsappText: "Ciao Galaxy Barbershop, vorrei richiedere un appuntamento.",
+    whatsappText: "Ciao Galaxy Barbershop, quando posso passare?",
   },
   es: {
     code: "es",
@@ -514,7 +517,7 @@ const translations = {
       caption: "Dübendorfstrasse 22 · Zúrich-Schwamendingen",
       alt: "Sala barber oscura con lounge de cuero, luz cálida y suelo ajedrezado en Galaxy Barbershop Zúrich",
     },
-    gallery: { kicker: "Galería", title: "Cortes frescos del shop.", lead: "Clientes reales, resultados reales. Toca una imagen para ampliarla.", expand: "Ampliar imagen" },
+    gallery: { kicker: "Galería", title: "Cortes frescos del shop.", lead: "Clientes reales, resultados reales. Toca una imagen para ampliarla.", expand: "Ampliar imagen", moreKicker: "Más fotos", moreTitle: "Más cortes del shop.", moreLead: "Más trabajos de Khaled – toca para ampliar." },
     reviews: {
       kicker: "Reseñas Google",
       title: "4.8 estrellas. 119 reseñas. Todas públicas en Google.",
@@ -553,7 +556,7 @@ const translations = {
     },
     navToggleOpen: "Abrir navegación",
     navToggleClose: "Cerrar navegación",
-    whatsappText: "Hola Galaxy Barbershop, me gustaría solicitar una cita.",
+    whatsappText: "Hola Galaxy Barbershop, ¿cuándo puedo pasar?",
   },
 };
 
@@ -670,6 +673,9 @@ const applyLanguage = (language) => {
   setText(".gallery-section .section-kicker", t.gallery.kicker);
   setText(".gallery-section h2", t.gallery.title);
   setText(".gallery-section .section-lead", t.gallery.lead);
+  setText(".gallery-more-kicker", t.gallery.moreKicker);
+  setText(".gallery-more-heading h3", t.gallery.moreTitle);
+  setText(".gallery-more-lead", t.gallery.moreLead);
   setAttr(".proof-card:first-child img", "alt", t.proofCards.clearAlt);
   t.proofCards.items.forEach(([title, copy], index) => {
     const card = `.proof-card:nth-child(${index + 1})`;
